@@ -25,8 +25,29 @@ export function createProduct({
   informationSource,
   informationDate,
   confidenceLevel,
+  confirmedFields,
+  fieldConfidence,
+  internalCode,
   status,
 }) {
+  const unknown = 'Não informado'
+  const normalizedSpecifications = typeof specifications === 'object' && specifications !== null
+    ? {
+      gramatura: specifications.gramatura || unknown,
+      dimensoes: specifications.dimensoes || unknown,
+      cor: specifications.cor || unknown,
+      material: specifications.material || unknown,
+      quantidadePorEmbalagem: specifications.quantidadePorEmbalagem || unknown,
+      outras: specifications.outras || unknown,
+    }
+    : {
+      gramatura: unknown,
+      dimensoes: unknown,
+      cor: unknown,
+      material: unknown,
+      quantidadePorEmbalagem: unknown,
+      outras: unknown,
+    }
   return {
     id,
     name,
@@ -34,7 +55,7 @@ export function createProduct({
     subcategory,
     description,
     unitOfSale,
-    specifications,
+    specifications: normalizedSpecifications,
     brands,
     stock,
     cost,
@@ -43,6 +64,9 @@ export function createProduct({
     informationSource,
     informationDate,
     confidenceLevel,
+    confirmedFields,
+    fieldConfidence,
+    internalCode,
     status,
   }
 }

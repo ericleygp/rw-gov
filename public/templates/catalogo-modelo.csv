@@ -1,0 +1,3 @@
+nome;categoria;subcategoria;descricao;unidade_venda;marca;gramatura;dimensoes;cor;material;qtd_por_embalagem;outras_especificacoes;estoque;custo;preco_venda;fornecedor;codigo_interno
+EXEMPLO — apagar;Material Escolar;Papéis;EXEMPLO FICTÍCIO — apagar antes de importar;unidade;Marca fictícia;75 g/m²;A4;Branco;Papel;500 folhas;Sem valor comercial;12;10,50;15,90;Fornecedor fictício;EX-001
+EXEMPLO — apagar;Escritório;Escrita;EXEMPLO FICTÍCIO — apagar antes de importar;caixa;Marca fictícia;Não informado;Não informado;Azul;Plástico;10 unidades;Amostra sem relação com estoque real;5;2,00;3,50;Fornecedor fictício;EX-002
