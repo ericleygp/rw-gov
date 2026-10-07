@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react'
+import { Component, useMemo, useState } from 'react'
 import { listOpportunities } from './repositories/opportunityRepository.js'
+import { listMatchesByOpportunityId } from '../matching/repositories/matchRepository.js'
 import { opportunityStatuses } from './model/opportunity.js'
 import { normalizeText } from '../../utils/normalizeText.js'
 import './OpportunitiesPage.css'
@@ -104,7 +105,7 @@ function OpportunitiesPage() {
       <div className="radar-table-footer"><span>Exibindo {filteredOpportunities.length} oportunidade(s)</span><span><i /> Valores e prazos são fictícios</span></div>
     </section>
 
-    {selectedOpportunity && <OpportunityDetail opportunity={selectedOpportunity} onClose={() => setSelectedId(null)} />}
+    {selectedOpportunity && <RadarDetailErrorBoundary key={selectedOpportunity.id} onBack={() => setSelectedId(null)}><OpportunityDetail opportunity={selectedOpportunity} onClose={() => setSelectedId(null)} /></RadarDetailErrorBoundary>}
   </div>
 }
 
@@ -177,6 +178,19 @@ function ItemTableRows({ item, match, product, alternatives, expanded, onToggle 
       ['Gramatura', item.specifications.gramatura], ['Dimensões', item.specifications.dimensoes], ['Cor', item.specifications.cor], ['Material', item.specifications.material], ['Quantidade por embalagem', item.specifications.quantidadePorEmbalagem], ['Outras especificações', item.specifications.outras],
     ].map(([label, value]) => <div key={label}><small>{label}</small><strong className={value === 'não informado' ? 'item-unknown' : ''}>{value}</strong></div>)}</div><div className="expanded-item-source"><span>Origem: {item.informationSource}</span><span>Data: {item.informationDate}</span><span>Status: {item.status}</span><span>{match.origin} · {match.confidence}</span></div></div></td></tr>}
   </>
+}
+
+class RadarDetailErrorBoundary extends Component {
+  state = { hasError: false }
+
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+
+  render() {
+    if (this.state.hasError) return <div className="detail-backdrop"><section className="opportunity-detail radar-detail-error" role="alert"><h2>Não foi possível abrir os detalhes desta oportunidade.</h2><p>Volte à lista e tente abrir novamente.</p><button type="button" onClick={this.props.onBack}>Voltar à lista</button></section></div>
+    return this.props.children
+  }
 }
 
 function matchLabel(type) {
