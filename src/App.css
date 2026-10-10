@@ -43,3 +43,14 @@
 @media (max-width: 1180px) { .dashboard-columns { grid-template-columns: minmax(0, 1.55fr) minmax(260px, .8fr); } }
 @media (max-width: 900px) { .dashboard-columns { grid-template-columns: 1fr; }.dashboard-distributions { grid-template-columns: minmax(0, 1.5fr) minmax(180px, .8fr); } }
 @media (max-width: 640px) { .dashboard-columns { grid-template-columns: 1fr; }.dashboard-distributions { grid-template-columns: 1fr; }.dashboard-data-source { white-space: normal; }.distribution-row > span { width: 150px; } }
+
+/* Dashboard: títulos longos não estouram a largura da tabela */
+.dashboard-feature-table { table-layout: fixed; width: 100%; min-width: 760px; }
+.dashboard-feature-table th:nth-child(1) { width: 46%; }
+.dashboard-feature-table th:nth-child(2) { width: 17%; }
+.dashboard-feature-table th:nth-child(3) { width: 17%; }
+.dashboard-feature-table th:nth-child(4) { width: 20%; }
+.dashboard-feature-table .opportunity-name { min-width: 0; }
+.dashboard-feature-table .opportunity-name > span:last-child { min-width: 0; white-space: normal; }
+.dashboard-feature-table .opportunity-name strong { display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.35; }
+.dashboard-feature-table .opportunity-name small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

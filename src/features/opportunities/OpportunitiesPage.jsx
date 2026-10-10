@@ -29,7 +29,7 @@ function formatDeadline(date) {
   return `${days} dias restantes`
 }
 
-function OpportunitiesPage() {
+function OpportunitiesPage({ onNavigate }) {
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState('Todas as situações')
   const [category, setCategory] = useState('Todas as categorias')
@@ -111,7 +111,7 @@ function OpportunitiesPage() {
       <div className="radar-table-footer"><span>Exibindo {filteredOpportunities.length} oportunidade(s)</span><span><i /> {REAL ? 'Valores são estimativas do órgão; prazos conforme o PNCP' : 'Valores e prazos são fictícios'}</span></div>
     </section>
 
-    {selectedOpportunity && <RadarDetailErrorBoundary key={selectedOpportunity.id} onBack={() => setSelectedId(null)}><OpportunityDetail opportunity={selectedOpportunity} onClose={() => setSelectedId(null)} /></RadarDetailErrorBoundary>}
+    {selectedOpportunity && <RadarDetailErrorBoundary key={selectedOpportunity.id} onBack={() => setSelectedId(null)}><OpportunityDetail opportunity={selectedOpportunity} onClose={() => setSelectedId(null)} onStartProposal={(id) => { globalThis.sessionStorage?.setItem('rwgov.proposta.nova', id); onNavigate?.('Propostas de Preços') }} /></RadarDetailErrorBoundary>}
   </div>
 }
 
@@ -123,7 +123,7 @@ function FilterSelect({ label, value, onChange, options }) {
   return <label className="filter-select"><span>{label}</span><select value={value} onChange={(event) => onChange(event.target.value)} aria-label={`Filtrar por ${label.toLocaleLowerCase('pt-BR')}`}>{options.map((option) => <option key={option}>{option}</option>)}</select></label>
 }
 
-function OpportunityDetail({ opportunity, onClose }) {
+function OpportunityDetail({ opportunity, onClose, onStartProposal }) {
   return <div className="detail-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}>
     <section className="opportunity-detail" role="dialog" aria-modal="true" aria-labelledby="opportunity-detail-title">
       <div className="detail-topline"><span className="simulation-tag">{REAL ? 'Fonte: PNCP' : 'Demonstração — dado simulado'}</span><button type="button" className="detail-close" onClick={onClose} aria-label="Fechar detalhes">×</button></div>
@@ -133,6 +133,7 @@ function OpportunityDetail({ opportunity, onClose }) {
       <span className={`radar-status status-${statusClass(opportunity.status)}`}><i />{opportunity.status}</span>
       <p className="detail-summary">{opportunity.summary}</p>
       {opportunity.link && <p className="detail-summary"><a href={opportunity.link} target="_blank" rel="noreferrer">Abrir edital no PNCP ↗</a></p>}
+      {REAL && onStartProposal && <p className="detail-summary"><button type="button" className="proposal-start-button" onClick={() => onStartProposal(opportunity.id)}>Montar proposta de preços</button></p>}
       <div className="detail-facts">
         <DetailFact label="Município / UF" value={`${opportunity.city} / ${opportunity.state}`} />
         <DetailFact label="Categoria" value={opportunity.category} />

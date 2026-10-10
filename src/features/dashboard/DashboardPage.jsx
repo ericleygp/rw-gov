@@ -5,6 +5,7 @@ import { opportunityStatuses } from '../opportunities/model/opportunity.js'
 import { getCompanyProfile } from '../company/repositories/companyProfileRepository.js'
 import { getSessionTiming } from './utils/sessionTiming.js'
 import { isRealData } from '../../data/realData.js'
+import './DashboardFilters.css'
 
 const opportunities = listOpportunities()
 const opportunityItems = listOpportunityItems()
@@ -16,6 +17,8 @@ const deadlineFormat = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month:
 
 function DashboardPage({ onNavigate }) {
   const [now, setNow] = useState(() => new Date())
+  const [search, setSearch] = useState('')
+  const [cityFilter, setCityFilter] = useState('')
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 60_000)
@@ -31,6 +34,10 @@ function DashboardPage({ onNavigate }) {
     .map((item) => ({ item, timing: getSessionTiming(item.sessionAt, now) }))
     .filter(({ timing }) => !timing.hasPassed && timing.daysRemaining >= 0 && timing.daysRemaining <= 7)
     .sort((a, b) => new Date(a.item.sessionAt) - new Date(b.item.sessionAt))
+  const cityOptions = [...new Set(upcomingDeadlines.map(({ item }) => item.city).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'))
+  const searchTerm = normalizeText(search)
+  const filteredDeadlines = upcomingDeadlines.filter(({ item }) => (!cityFilter || item.city === cityFilter) && (!searchTerm || normalizeText(`${item.title} ${item.agency} ${item.city}`).includes(searchTerm)))
+  const hasFilter = Boolean(search || cityFilter)
   const knownValues = opportunities.filter((item) => Number.isFinite(item.estimatedValue))
   const totalEstimatedValue = knownValues.reduce((total, item) => total + item.estimatedValue, 0)
   const categoryCounts = countBy(opportunities, (item) => item.category)
@@ -51,8 +58,18 @@ function DashboardPage({ onNavigate }) {
 
     <div className="dashboard-columns">
       <section className="panel opportunities-panel"><div className="panel-header"><div><h2>Oportunidades em destaque</h2><p>Sessões de hoje até os próximos 7 dias · dados do Radar</p></div><button className="text-action" type="button" onClick={() => onNavigate('Radar de Oportunidades')}>Abrir Radar <b>→</b></button></div>
+        <div className="dashboard-filters">
+          <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar por oportunidade, órgão ou município" aria-label="Buscar oportunidades" />
+          <select value={cityFilter} onChange={(event) => setCityFilter(event.target.value)} aria-label="Filtrar por município">
+            <option value="">Todos os municípios</option>
+            {cityOptions.map((city) => <option key={city} value={city}>{city}</option>)}
+          </select>
+          {hasFilter && <button type="button" className="text-action" onClick={() => { setSearch(''); setCityFilter('') }}>Limpar</button>}
+          <span className="dashboard-filter-count">{filteredDeadlines.length} de {upcomingDeadlines.length}</span>
+        </div>
         <div className="table-wrap"><table className="dashboard-feature-table"><thead><tr><th>OPORTUNIDADE / ÓRGÃO</th><th>MUNICÍPIO / UF</th><th>VALOR ESTIMADO</th><th>SESSÃO</th></tr></thead><tbody>
-          {upcomingDeadlines.map(({ item, timing }) => <tr key={item.id}><td><div className="opportunity-name"><span className="opportunity-icon green">▤</span><span><strong>{item.title}</strong><small>{item.agency}</small><small>{item.category} · {detailedItemCounts[item.id] || 0} de {item.itemCount} itens detalhados</small></span></div></td><td><span className="table-primary">{item.city}</span><span className="table-secondary">{item.state}</span></td><td className="value-cell">{Number.isFinite(item.estimatedValue) ? currency.format(item.estimatedValue) : 'Não informado'}</td><td><span className="table-primary">{deadlineFormat.format(new Date(item.sessionAt))}</span><span className="table-secondary dashboard-deadline-left">{formatDaysRemaining(timing)}</span></td></tr>)}
+          {filteredDeadlines.map(({ item, timing }) => <tr key={item.id}><td><div className="opportunity-name"><span className="opportunity-icon green">▤</span><span><strong>{item.title}</strong><small>{item.agency}</small><small>{item.category} · {detailedItemCounts[item.id] || 0} de {item.itemCount} itens detalhados</small></span></div></td><td><span className="table-primary">{item.city}</span><span className="table-secondary">{item.state}</span></td><td className="value-cell">{Number.isFinite(item.estimatedValue) ? currency.format(item.estimatedValue) : 'Não informado'}</td><td><span className="table-primary">{deadlineFormat.format(new Date(item.sessionAt))}</span><span className="table-secondary dashboard-deadline-left">{formatDaysRemaining(timing)}</span></td></tr>)}
+          {upcomingDeadlines.length > 0 && filteredDeadlines.length === 0 && <tr><td colSpan="4" className="dashboard-empty">Nenhuma oportunidade encontrada com esse filtro.</td></tr>}
           {upcomingDeadlines.length === 0 && <tr><td colSpan="4" className="dashboard-empty">Ainda não há sessões entre hoje e os próximos 7 dias {REAL ? 'nas oportunidades reais.' : 'na base demonstrativa.'}</td></tr>}
         </tbody></table></div>
         <div className="panel-footnote"><i /> Itens detalhados são uma amostra parcial; consulte o Radar para ver a declaração de cobertura.</div>
@@ -104,6 +121,10 @@ function DistributionPanel({ title, description, entries, compact = false }) {
   const maxCount = Math.max(1, ...sortedEntries.map(([, count]) => count))
 
   return <section className={`panel distribution-panel${compact ? ' compact-distribution' : ''}`}><div className="panel-header"><div><h2>{title}</h2><p>{description}</p></div></div><div className="distribution-list">{sortedEntries.map(([label, count]) => <div className="distribution-row" key={label}><span title={label}>{label}</span><div className="distribution-track"><i style={{ width: `${(count / maxCount) * 100}%` }} /></div><strong>{count}</strong></div>)}</div></section>
+}
+
+function normalizeText(value) {
+  return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
 }
 
 export default DashboardPage

@@ -107,3 +107,6 @@
 .match-exata_a_validar { background: #fff5e5; color: #a77a2c; }
 .match-summary { flex-wrap: wrap; }
 .match-summary small { flex-basis: 100%; color: #89958d; font-size: 7px; }
+
+.proposal-start-button { border: 1px solid var(--green); background: var(--green); color: #fff; border-radius: 10px; padding: 9px 14px; font-weight: 600; cursor: pointer; }
+.proposal-start-button:hover { filter: brightness(.95); }

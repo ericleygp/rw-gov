@@ -1,6 +1,8 @@
 const pagesByHash = {
   dashboard: 'Dashboard',
   radar: 'Radar de Oportunidades',
+  mapa: 'Mapa de Oportunidades',
+  proposta: 'Propostas de Preços',
   catalogo: 'Catálogo',
   empresa: 'Empresa',
 }

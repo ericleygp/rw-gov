@@ -146,21 +146,32 @@ for (const c of abertas) {
   const prov = achados.filter((a) => a.nivel === 'provavel')
   // Relevância = quantos produtos DIFERENTES do catálogo aparecem como provável (derruba coincidências de 1 produto só).
   const distintos = new Set(prov.map((a) => a.codigo)).size
+  // Lista completa do edital (para montar proposta): só das compras com algum item provável, para o arquivo não crescer à toa.
+  const porNumero = new Map(achados.map((a) => [a.numeroItem, a]))
+  const todosItens = prov.length > 0 ? itens.map((it) => {
+    const a = porNumero.get(it.numeroItem)
+    return {
+      numeroItem: it.numeroItem, descricao: String(it.descricao ?? ''), unidade: it.unidadeMedida ?? null, quantidade: it.quantidade ?? null,
+      valorUnitario: it.orcamentoSigiloso ? null : (it.valorUnitarioEstimado ?? null), sigiloso: Boolean(it.orcamentoSigiloso), tipo: it.materialOuServico ?? null,
+      match: a ? { nivel: a.nivel, produto: a.produto, estoque: a.estoque || 'não informado', precoVenda: a.precoVenda || 'não informado', codigo: a.codigo } : null,
+    }
+  }) : undefined
   const relevancia = distintos >= 8 ? 'alta' : distintos >= 3 ? 'media' : distintos >= 1 ? 'baixa' : 'nenhuma'
   resultado.push({
     id: c.numeroControlePNCP, orgao: c.orgaoEntidade?.razaoSocial, municipio: c.unidadeOrgao?.municipioNome, modalidade: c.modalidadeNome,
     objeto: c.objetoCompra, encerramento: c.dataEncerramentoProposta, valorEstimado: c.valorTotalEstimado ?? null,
     link: `https://pncp.gov.br/app/editais/${c.orgaoEntidade?.cnpj}/${c.anoCompra}/${c.sequencialCompra}`,
+    ibge: c.unidadeOrgao?.codigoIbge != null ? String(c.unidadeOrgao.codigoIbge) : null,
     numeroCompra: c.numeroCompra ?? null, processo: c.processo ?? null, publicadoEm: c.dataPublicacaoPncp ?? null,
     relevancia, produtosDistintos: distintos, cobertura: materiais.length ? Math.round((prov.length / materiais.length) * 100) : 0,
-    totalItens: itens.length, itensMateriais: materiais.length, provaveis: prov.length, possiveis: achados.length - prov.length,
+    totalItens: itens.length, itensMateriais: materiais.length, todosItens, provaveis: prov.length, possiveis: achados.length - prov.length,
     valorProvavel: prov.reduce((s, a) => s + (Number(a.valorTotal) || 0), 0), itens: achados,
   })
 }
 const peso = { alta: 3, media: 2, baixa: 1, nenhuma: 0 }
 if (falhas > Math.max(5, abertas.length * 0.1)) { console.error(`\nMuitas falhas ao ler itens (${falhas}). A lista anterior foi mantida; tente de novo mais tarde.`); process.exit(1) }
 resultado.sort((a, b) => peso[b.relevancia] - peso[a.relevancia] || b.valorProvavel - a.valorProvavel || b.provaveis - a.provaveis)
-fs.writeFileSync(`${PASTA}/resultado-busca.json`, JSON.stringify({ geradoEm: new Date().toISOString(), uf: UF, lidas: abertas.length, resultado }, null, 2))
+fs.writeFileSync(`${PASTA}/resultado-busca.json`, JSON.stringify({ geradoEm: new Date().toISOString(), uf: UF, lidas: abertas.length, resultado: resultado.map(({ todosItens: _todosItens, ...resto }) => resto) }, null, 2))
 
 const com = resultado.filter((r) => r.provaveis > 0)
 const cont = (n) => resultado.filter((r) => r.relevancia === n).length
@@ -177,7 +188,7 @@ const oportunidades = com.map((r) => ({
   agency: r.orgao, city: r.municipio, state: UF, modality: r.modalidade, status: 'Aberta', category: 'Não informado',
   estimatedValue: dinheiro(r.valorEstimado), publishedAt: String(r.publicadoEm ?? '').slice(0, 10) || 'não informado', sessionAt: r.encerramento,
   itemCount: r.totalItens, summary: String(r.objeto ?? ''), source: 'PNCP', capturedAt: new Date().toISOString(), dataConfidence: 'Oficial (PNCP)',
-  link: r.link, relevancia: r.relevancia, produtosDistintos: r.produtosDistintos, itensProvaveis: r.provaveis, cobertura: r.cobertura,
+  link: r.link, ibge: r.ibge, relevancia: r.relevancia, produtosDistintos: r.produtosDistintos, itensProvaveis: r.provaveis, cobertura: r.cobertura,
 }))
 const itensApp = com.flatMap((r) => r.itens.map((a) => ({
   id: `pncp-${r.id.replaceAll('/', '-')}-${a.numeroItem}`, opportunityId: `pncp-${r.id.replaceAll('/', '-')}`, itemNumber: a.numeroItem,
@@ -185,5 +196,7 @@ const itensApp = com.flatMap((r) => r.itens.map((a) => ({
   match: { nivel: a.nivel, produto: a.produto, estoque: a.estoque || 'não informado', precoVenda: a.precoVenda || 'não informado', codigo: a.codigo },
 })))
 fs.mkdirSync('public/dados-locais', { recursive: true })
+const editais = Object.fromEntries(com.filter((r) => r.todosItens).map((r) => [`pncp-${r.id.replaceAll('/', '-')}`, r.todosItens]))
+fs.writeFileSync('public/dados-locais/itens-completos.json', JSON.stringify({ geradoEm: new Date().toISOString(), fonte: 'PNCP', editais }))
 fs.writeFileSync('public/dados-locais/oportunidades-reais.json', JSON.stringify({ geradoEm: new Date().toISOString(), fonte: 'PNCP', uf: UF, oportunidades, itens: itensApp }))
-console.log(`\nDetalhes em ${PASTA}/resultado-busca.json · arquivo do app: public/dados-locais/oportunidades-reais.json (${oportunidades.length} oportunidades, ${itensApp.length} itens)`)
+console.log(`\nDetalhes em ${PASTA}/resultado-busca.json · arquivo do app: public/dados-locais/oportunidades-reais.json (${oportunidades.length} oportunidades, ${itensApp.length} itens) + itens-completos.json (${Object.keys(editais).length} editais)`)

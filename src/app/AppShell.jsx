@@ -7,6 +7,8 @@ const companyProfile = getCompanyProfile()
 const navigation = [
   { label: 'Dashboard', icon: '▦' },
   { label: 'Radar de Oportunidades', icon: '⌕' },
+  { label: 'Mapa de Oportunidades', icon: '◎' },
+  { label: 'Propostas de Preços', icon: '✎' },
   { label: 'Catálogo', icon: '▣' },
   { label: 'Empresa', icon: '◉' },
 ]

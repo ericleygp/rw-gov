@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import AppShell from './app/AppShell.jsx'
 import DashboardPage from './features/dashboard/DashboardPage.jsx'
 import OpportunitiesPage from './features/opportunities/OpportunitiesPage.jsx'
+import MapPage from './features/map/MapPage.jsx'
+import ProposalsPage from './features/proposals/ProposalsPage.jsx'
 import CatalogPage from './features/catalog/CatalogPage.jsx'
 import CompanyProfilePage from './features/company/CompanyProfilePage.jsx'
 import { readCurrentPage, writeCurrentPage } from './app/navigation.js'
@@ -23,7 +25,7 @@ function App() {
 
   return (
     <AppShell activePage={activePage} onNavigate={navigate}>
-      {activePage === 'Dashboard' ? <DashboardPage onNavigate={navigate} /> : activePage === 'Radar de Oportunidades' ? <OpportunitiesPage /> : activePage === 'Catálogo' ? <CatalogPage /> : activePage === 'Empresa' ? <CompanyProfilePage /> : null}
+      {activePage === 'Dashboard' ? <DashboardPage onNavigate={navigate} /> : activePage === 'Radar de Oportunidades' ? <OpportunitiesPage onNavigate={navigate} /> : activePage === 'Propostas de Preços' ? <ProposalsPage /> : activePage === 'Mapa de Oportunidades' ? <MapPage onNavigate={navigate} /> : activePage === 'Catálogo' ? <CatalogPage /> : activePage === 'Empresa' ? <CompanyProfilePage /> : null}
     </AppShell>
   )
 }

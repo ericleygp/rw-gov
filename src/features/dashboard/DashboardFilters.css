@@ -1,0 +1,5 @@
+.dashboard-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; padding: 0 17px 13px; }
+.dashboard-filters input[type="search"] { flex: 1 1 260px; min-width: 0; height: 32px; padding: 0 11px; border: 1px solid #e3e9e5; border-radius: 7px; background: #fff; color: #435048; font: inherit; font-size: 10px; }
+.dashboard-filters select { flex: 0 1 200px; min-width: 0; height: 32px; padding: 0 9px; border: 1px solid #e3e9e5; border-radius: 7px; background: #fff; color: #435048; font: inherit; font-size: 10px; }
+.dashboard-filters input:focus, .dashboard-filters select:focus { outline: 2px solid #cfe8d8; border-color: #9fcfb1; }
+.dashboard-filter-count { margin-left: auto; color: #9aa39e; font-size: 9px; }

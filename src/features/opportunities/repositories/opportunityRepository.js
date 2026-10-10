@@ -12,6 +12,6 @@ export function listOpportunities() {
   if (!real) return mockOpportunities
   return real.oportunidades.filter(hasValidSession).map((record) => ({
     ...createOpportunity({ ...record, estimatedValue: knownValue(record.estimatedValue) }),
-    link: record.link, relevancia: record.relevancia, produtosDistintos: record.produtosDistintos, itensProvaveis: record.itensProvaveis, cobertura: record.cobertura,
+    link: record.link, ibge: record.ibge ?? null, relevancia: record.relevancia, produtosDistintos: record.produtosDistintos, itensProvaveis: record.itensProvaveis, cobertura: record.cobertura,
   }))
 }
