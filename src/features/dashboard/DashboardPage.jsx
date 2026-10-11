@@ -25,6 +25,11 @@ function DashboardPage({ onNavigate }) {
     return () => window.clearInterval(timer)
   }, [])
 
+  function openProposal(opportunityId) {
+    globalThis.sessionStorage?.setItem('rwgov.proposta.nova', opportunityId)
+    onNavigate?.('Propostas de Preços')
+  }
+
   const greeting = getGreeting(now)
   const responsibleValue = companyProfile.responsibleName || companyProfile.responsible || ''
   const responsible = ['Não configurado', 'A confirmar', 'não informado'].includes(responsibleValue) ? '' : responsibleValue
@@ -68,7 +73,7 @@ function DashboardPage({ onNavigate }) {
           <span className="dashboard-filter-count">{filteredDeadlines.length} de {upcomingDeadlines.length}</span>
         </div>
         <div className="table-wrap"><table className="dashboard-feature-table"><thead><tr><th>OPORTUNIDADE / ÓRGÃO</th><th>MUNICÍPIO / UF</th><th>VALOR ESTIMADO</th><th>SESSÃO</th></tr></thead><tbody>
-          {filteredDeadlines.map(({ item, timing }) => <tr key={item.id}><td><div className="opportunity-name"><span className="opportunity-icon green">▤</span><span><strong>{item.title}</strong><small>{item.agency}</small><small>{item.category} · {detailedItemCounts[item.id] || 0} de {item.itemCount} itens detalhados</small></span></div></td><td><span className="table-primary">{item.city}</span><span className="table-secondary">{item.state}</span></td><td className="value-cell">{Number.isFinite(item.estimatedValue) ? currency.format(item.estimatedValue) : 'Não informado'}</td><td><span className="table-primary">{deadlineFormat.format(new Date(item.sessionAt))}</span><span className="table-secondary dashboard-deadline-left">{formatDaysRemaining(timing)}</span></td></tr>)}
+          {filteredDeadlines.map(({ item, timing }) => <tr key={item.id} className={REAL ? 'clickable-row' : undefined} title={REAL ? 'Abrir a proposta de preços deste edital' : undefined} tabIndex={REAL ? 0 : undefined} onClick={REAL ? () => openProposal(item.id) : undefined} onKeyDown={REAL ? (event) => { if (event.key === 'Enter') openProposal(item.id) } : undefined}><td><div className="opportunity-name"><span className="opportunity-icon green">▤</span><span><strong>{item.title}</strong><small>{item.agency}</small><small>{item.category} · {detailedItemCounts[item.id] || 0} de {item.itemCount} itens detalhados</small></span></div></td><td><span className="table-primary">{item.city}</span><span className="table-secondary">{item.state}</span></td><td className="value-cell">{Number.isFinite(item.estimatedValue) ? currency.format(item.estimatedValue) : 'Não informado'}</td><td><span className="table-primary">{deadlineFormat.format(new Date(item.sessionAt))}</span><span className="table-secondary dashboard-deadline-left">{formatDaysRemaining(timing)}</span></td></tr>)}
           {upcomingDeadlines.length > 0 && filteredDeadlines.length === 0 && <tr><td colSpan="4" className="dashboard-empty">Nenhuma oportunidade encontrada com esse filtro.</td></tr>}
           {upcomingDeadlines.length === 0 && <tr><td colSpan="4" className="dashboard-empty">Ainda não há sessões entre hoje e os próximos 7 dias {REAL ? 'nas oportunidades reais.' : 'na base demonstrativa.'}</td></tr>}
         </tbody></table></div>

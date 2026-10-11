@@ -3,3 +3,5 @@
 .dashboard-filters select { flex: 0 1 200px; min-width: 0; height: 32px; padding: 0 9px; border: 1px solid #e3e9e5; border-radius: 7px; background: #fff; color: #435048; font: inherit; font-size: 10px; }
 .dashboard-filters input:focus, .dashboard-filters select:focus { outline: 2px solid #cfe8d8; border-color: #9fcfb1; }
 .dashboard-filter-count { margin-left: auto; color: #9aa39e; font-size: 9px; }
+.dashboard-feature-table tr.clickable-row { cursor: pointer; }
+.dashboard-feature-table tr.clickable-row:hover, .dashboard-feature-table tr.clickable-row:focus-visible { background: #f6fbf8; outline: none; }

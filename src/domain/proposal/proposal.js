@@ -32,6 +32,13 @@ export function initialLines(items) {
   return Object.fromEntries(items.map((item) => [item.id, { include: item.match?.nivel === 'provavel' && !item.isService, costText: '', priceText: '' }]))
 }
 
+// Troca a lista parcial pela completa do edital, mantendo o que o usuário já preencheu nos itens que já existiam.
+export function upgradeProposalItems(proposal, rawItems) {
+  const items = normalizeEditalItems(proposal.opportunityId, rawItems)
+  const lines = { ...initialLines(items), ...Object.fromEntries(Object.entries(proposal.lines ?? {}).filter(([id]) => items.some((item) => item.id === id))) }
+  return { ...proposal, items, lines, partial: false }
+}
+
 export function lineMetrics(item, line) {
   const price = parseDecimal(line.priceText)
   const cost = parseDecimal(line.costText)

@@ -2,13 +2,16 @@ import { useEffect, useMemo, useState } from 'react'
 import './ProposalsPage.css'
 import { getRealData, isRealData } from '../../data/realData.js'
 import { loadFullItems } from '../../data/fullItems.js'
-import { applyCatalogPrices, applyTargetMargin, initialLines, lineMetrics, normalizeEditalItems, summarize, toCsv } from '../../domain/proposal/proposal.js'
+import EditalFiles from './EditalFiles.jsx'
+import EditalNotes from './EditalNotes.jsx'
+import { applyCatalogPrices, applyTargetMargin, initialLines, lineMetrics, normalizeEditalItems, summarize, toCsv, upgradeProposalItems } from '../../domain/proposal/proposal.js'
 import { normalizeText } from '../../utils/normalizeText.js'
 import { getSessionTiming } from '../dashboard/utils/sessionTiming.js'
 import { listOpportunities } from '../opportunities/repositories/opportunityRepository.js'
 import { deleteProposal, getProposal, listProposals, saveProposal } from './repositories/proposalRepository.js'
 
 export const PENDING_KEY = 'rwgov.proposta.nova'
+const PARTIAL_NOTICE = 'Lista parcial: só os itens que combinam com o catálogo. Rode a atualização (scripts\\atualizar.cmd), recarregue a página e abra a proposta de novo para trazer o edital completo.'
 const money = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 const percent = (value) => (value === null || value === undefined ? '—' : `${value.toFixed(1).replace('.', ',')}%`)
 const dateFormat = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
@@ -54,6 +57,7 @@ function ProposalsPage() {
   const [filter, setFilter] = useState('todos')
   const [loading, setLoading] = useState(false)
   const [notice, setNotice] = useState('')
+  const [aba, setAba] = useState('itens')
   const [saveFailed, setSaveFailed] = useState(false)
 
   // Salva sozinho, pouco depois da última alteração.
@@ -65,7 +69,18 @@ function ProposalsPage() {
 
   async function start(opportunityId) {
     const existing = getProposal(opportunityId)
-    if (existing) { setProposal(existing); setNotice(''); return }
+    if (existing) {
+      // Proposta salva com lista parcial: se a lista completa já existe, atualiza sem perder o que foi preenchido.
+      const full = (await loadFullItems())?.[opportunityId]
+      if (full && full.length > existing.items.length) {
+        setProposal(upgradeProposalItems(existing, full))
+        setNotice(`Lista completa do edital carregada: ${full.length} itens. O que você já preencheu foi mantido.`)
+      } else {
+        setProposal(existing)
+        setNotice(existing.partial ? PARTIAL_NOTICE : '')
+      }
+      return
+    }
     const opportunity = opportunities.find((item) => item.id === opportunityId)
     if (!opportunity) { setNotice('Esse edital não está mais na lista de oportunidades abertas.'); return }
     setLoading(true)
@@ -82,10 +97,10 @@ function ProposalsPage() {
     }
     const items = normalizeEditalItems(opportunityId, raw)
     setLoading(false)
-    setNotice(partial ? 'Lista parcial: só os itens que combinam com o catálogo. Rode a atualização (scripts\\atualizar.cmd) para trazer o edital completo.' : '')
+    setNotice(partial ? PARTIAL_NOTICE : '')
     setProposal({
       opportunityId, title: opportunity.title, agency: opportunity.agency, city: opportunity.city, sessionAt: opportunity.sessionAt, link: opportunity.link ?? '',
-      estimatedValue: Number.isFinite(opportunity.estimatedValue) ? opportunity.estimatedValue : null, marginTargetText: '30', items, lines: initialLines(items), createdAt: new Date().toISOString(),
+      estimatedValue: Number.isFinite(opportunity.estimatedValue) ? opportunity.estimatedValue : null, marginTargetText: '30', partial, items, lines: initialLines(items), createdAt: new Date().toISOString(),
     })
   }
 
@@ -158,7 +173,13 @@ function ProposalsPage() {
               <div className="proposal-head-actions">{proposal.link && <a href={proposal.link} target="_blank" rel="noreferrer">Abrir edital no PNCP ↗</a>}<button type="button" onClick={removeProposal}>Excluir proposta</button></div>
             </div>
             {notice && <p className="proposals-notice">{notice}</p>}
+            <EditalFiles key={proposal.opportunityId} link={proposal.link} />
             {saveFailed && <p className="proposals-notice proposals-notice-error">Não foi possível salvar no navegador (espaço cheio ou bloqueado). Exporte o CSV para não perder o trabalho.</p>}
+            <div className="proposal-tabs" role="tablist">
+              <button type="button" role="tab" aria-selected={aba === 'itens'} className={aba === 'itens' ? 'active' : ''} onClick={() => setAba('itens')}>Itens da proposta</button>
+              <button type="button" role="tab" aria-selected={aba === 'observacoes'} className={aba === 'observacoes' ? 'active' : ''} onClick={() => setAba('observacoes')}>Observações do edital</button>
+            </div>
+            {aba === 'itens' && <>
             <div className="proposal-tools">
               <label>Margem alvo <input className="money-input margin-input" inputMode="decimal" value={proposal.marginTargetText} onChange={(event) => setProposal((current) => ({ ...current, marginTargetText: event.target.value }))} aria-label="Margem alvo em porcentagem" /> %</label>
               <button type="button" onClick={() => setLines(applyTargetMargin(proposal.items, proposal.lines, Number(String(proposal.marginTargetText).replace(',', '.'))))}>Calcular preço pela margem</button>
@@ -168,7 +189,9 @@ function ProposalsPage() {
               <button type="button" className="proposals-primary" onClick={exportCsv}>Exportar CSV</button>
             </div>
             <div className="proposal-filters" role="group" aria-label="Filtrar itens">{FILTERS.map(([key, label]) => <button key={key} type="button" className={filter === key ? 'active' : ''} aria-pressed={filter === key} onClick={() => setFilter(key)}>{label}</button>)}<span>{visibleItems.length} de {proposal.items.length} itens</span></div>
+            </>}
           </section>
+          {aba === 'itens' ? <>
           <section className="proposals-card table-card">
             <div className="table-scroll"><table className="proposal-table">
               <thead><tr><th /><th>Nº</th><th>Item do edital</th><th>Qtd / un.</th><th>Referência unit.</th><th>Produto no catálogo</th><th>Custo unit.</th><th>Preço unit.</th><th>Margem</th><th>Total</th></tr></thead>
@@ -187,6 +210,7 @@ function ProposalsPage() {
               {summary.missingPrice + summary.aboveReference + summary.belowCost === 0 && summary.included > 0 && <span className="alert-ok">Sem pendências</span>}
             </div>
           </section>
+          </> : <EditalNotes key={proposal.opportunityId} link={proposal.link} />}
         </>}
     </main>
   </div>

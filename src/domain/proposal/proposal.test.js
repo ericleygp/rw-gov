@@ -83,3 +83,15 @@ test('CSV só com itens incluídos, aspas e vírgula decimal', () => {
   assert.match(rows[1], /^1;"Caneta esferográfica preta";"UNIDADE";100;2,00;1,00;1,60;160,00;37,5;"CANETA BIC PRETA"$/)
   assert.match(rows[2], /"Café em pó ""extra forte"""/)
 })
+
+test('upgradeProposalItems traz o edital completo e mantém o que já foi preenchido', async () => {
+  const { upgradeProposalItems, normalizeEditalItems, initialLines } = await import('./proposal.js')
+  const parcial = normalizeEditalItems('E1', [{ numeroItem: 2, descricao: 'Caneta', quantidade: 10, valorUnitario: 1 }])
+  const proposal = { opportunityId: 'E1', partial: true, items: parcial, lines: { ...initialLines(parcial), 'E1-2': { include: true, costText: '1,00', priceText: '2,00' } } }
+  const completa = [{ numeroItem: 1, descricao: 'Trofeu', quantidade: 5 }, { numeroItem: 2, descricao: 'Caneta', quantidade: 10, valorUnitario: 1 }, { numeroItem: 3, descricao: 'Camisa', quantidade: 3 }]
+  const next = upgradeProposalItems(proposal, completa)
+  assert.equal(next.items.length, 3)
+  assert.equal(next.partial, false)
+  assert.deepEqual(next.lines['E1-2'], { include: true, costText: '1,00', priceText: '2,00' })
+  assert.equal(next.lines['E1-1'].include, false)
+})
