@@ -1,0 +1,90 @@
+// Lê o texto do Edital / Termo de Referência e monta o checklist de habilitação, ligado aos níveis do SICAF.
+// Leitura por palavras-chave: cada exigência traz o trecho original e a página para conferir. O edital sempre prevalece.
+import { simplificar } from './observacoes.js'
+
+export const NIVEIS = {
+  II: 'Nível II · Habilitação Jurídica',
+  III: 'Nível III · Regularidade Fiscal e Trabalhista Federal',
+  IV: 'Nível IV · Regularidade Fiscal Estadual/Distrital e Municipal',
+  V: 'Nível V · Qualificação Técnica',
+  VI: 'Nível VI · Qualificação Econômico-Financeira',
+  FORA: 'Fora do SICAF · declarações e outras exigências',
+}
+
+// Níveis que o SICAF cobre; "FORA" precisa ser providenciado à parte.
+export const NIVEIS_SICAF = ['II', 'III', 'IV', 'V', 'VI']
+
+const REGRAS = [
+  { id: 'contrato_social', nivel: 'II', rotulo: 'Contrato social / ato constitutivo', achar: /(ato constitutivo|contrato social|estatuto social)/ },
+  { id: 'documento_socios', nivel: 'II', rotulo: 'Documento de identificação dos sócios/administradores', achar: /(documento|cedula) de identidade|documento de identificacao|identificacao d[oa]s? (?:socios?|dirigentes?|representante)/ },
+  { id: 'registro_comercial', nivel: 'II', rotulo: 'Registro comercial (empresa individual)', achar: /registro comercial/ },
+  { id: 'cnpj', nivel: 'III', rotulo: 'Inscrição no CNPJ', achar: /(inscricao|comprovante de inscricao)[^.]{0,60}(cnpj|cadastro nacional da pessoa juridica)/ },
+  { id: 'federal', nivel: 'III', rotulo: 'Certidão de tributos federais e Dívida Ativa da União (Receita/PGFN)', achar: /(tributos federais|divida ativa da uniao|receita federal|pgfn|procuradoria[- ]geral da fazenda nacional)/ },
+  { id: 'fgts', nivel: 'III', rotulo: 'Regularidade do FGTS (CRF)', achar: /(fgts|fundo de garantia (?:por|do) tempo de servico)/ },
+  { id: 'cndt', nivel: 'III', rotulo: 'Certidão negativa de débitos trabalhistas (CNDT)', achar: /(debitos trabalhistas|cndt|justica do trabalho)/ },
+  { id: 'seguridade', nivel: 'III', rotulo: 'Regularidade com a Seguridade Social (INSS)', achar: /(seguridade social|contribuicoes previdenciarias|inss)/ },
+  { id: 'inscricao_estadual_municipal', nivel: 'IV', rotulo: 'Inscrição no cadastro de contribuintes estadual/municipal', achar: /inscricao[^.]{0,60}cadastro de contribuintes|cadastro de contribuintes (?:estadual|municipal)/ },
+  { id: 'estadual', nivel: 'IV', rotulo: 'Regularidade com a Fazenda Estadual', achar: /(fazenda estadual|tributos estaduais|icms|fazenda do estado|fazenda publica estadual)/ },
+  { id: 'municipal', nivel: 'IV', rotulo: 'Regularidade com a Fazenda Municipal', achar: /(fazenda municipal|tributos municipais|iss\b|fazenda do municipio|fazenda publica municipal)/ },
+  { id: 'atestado', nivel: 'V', rotulo: 'Atestado(s) de capacidade técnica', achar: /atestados? (?:de capacidade tecnica|de aptidao|de fornecimento|fornecidos? por)|capacidade tecnica[^.]{0,80}atestado/ },
+  { id: 'conselho', nivel: 'V', rotulo: 'Registro em conselho profissional', achar: /(registro|inscricao)[^.]{0,60}(conselho (?:regional|profissional|de classe)|crea|crq|crf\b)/ },
+  { id: 'balanco', nivel: 'VI', rotulo: 'Balanço patrimonial e demonstrações contábeis (dois últimos exercícios)', achar: /(balanco patrimonial|demonstracoes contabeis|demonstracao do resultado)/ },
+  { id: 'falencia', nivel: 'VI', rotulo: 'Certidão negativa de falência / recuperação judicial', achar: /(certidao negativa de falencia|falencia[^.]{0,80}certidao|recuperacao judicial[^.]{0,80}certidao|certidao[^.]{0,80}recuperacao judicial)/ },
+  { id: 'indices', nivel: 'VI', rotulo: 'Índices contábeis / patrimônio líquido ou capital mínimo', achar: /(indices? de liquidez|liquidez (?:geral|corrente)|patrimonio liquido minimo|capital (?:social )?minimo|capital circulante)/ },
+  { id: 'decl_me_epp', nivel: 'FORA', rotulo: 'Declaração de enquadramento como ME/EPP', achar: /declaracao[^.]{0,120}(microempresa|empresa de pequeno porte|me\/epp|me ou epp|me e epp)|(microempresa|empresa de pequeno porte)[^.]{0,80}declaracao/ },
+  { id: 'decl_menor', nivel: 'FORA', rotulo: 'Declaração de não emprego de menores (art. 7º, XXXIII, CF)', achar: /(trabalho (?:noturno|insalubre|perigoso)[^.]{0,80}menores|menores de (?:18|dezoito)|inciso xxxiii)/ },
+  { id: 'decl_impeditivo', nivel: 'FORA', rotulo: 'Declaração de inexistência de fato impeditivo', achar: /(fato impeditivo|inexistencia de fatos? impeditiv\w+|declaracao de idoneidade|nao ter sido declarad\w+ inidone\w+)/ },
+  { id: 'decl_proposta', nivel: 'FORA', rotulo: 'Declaração de elaboração independente de proposta', achar: /elaboracao independente de proposta|proposta (?:foi )?elaborada de forma independente/ },
+  { id: 'decl_pcd', nivel: 'FORA', rotulo: 'Declaração de cumprimento de reserva de cargos (PcD / reabilitados)', achar: /(reserva de cargos|art(?:igo)?\.? 93 da lei (?:n[ºo.]? ?)?8\.?213|pessoas? com deficiencia[^.]{0,80}reabilitad)/ },
+  { id: 'amostra', nivel: 'FORA', rotulo: 'Amostra', achar: /amostras?\b/ },
+  { id: 'visita', nivel: 'FORA', rotulo: 'Visita técnica / vistoria', achar: /(visita tecnica|vistoria)[^.]{0,120}(obrigatori|facultativ|declaracao|agend)|(obrigatori|facultativ)[^.]{0,80}(visita tecnica|vistoria)/ },
+]
+
+const SICAF_ACEITA = /(documentos?|habilitacao|regularidade|cadastr\w+|comprov\w+)[^.]{0,120}(constantes?|cadastrad\w+|contid\w+|disponibiliz\w+|consult\w+|verific\w+)[^.]{0,60}sicaf|sicaf[^.]{0,120}(substitu\w+|dispens\w+|habilitacao|regularidade|comprov\w+)/
+const IGNORAR_SICAF = /no ambito dos orgaos e entidades integrantes/
+
+function ordemDocumento(tipo = '') {
+  const t = simplificar(tipo)
+  if (t.includes('edital')) return 0
+  if (t.includes('termo de referencia')) return 1
+  if (t.includes('minuta') || t.includes('contrato') || t.includes('ata')) return 3
+  return 2
+}
+
+function trechoDe(original, indice) {
+  const ini = Math.max(0, indice - 80)
+  const fim = Math.min(original.length, indice + 300)
+  let trecho = original.slice(ini, fim).replace(/\s+/g, ' ').trim()
+  if (ini > 0) trecho = `…${trecho}`
+  if (fim < original.length) trecho = `${trecho}…`
+  return trecho
+}
+
+function procurar(docs, padrao, ignorar) {
+  for (const doc of docs) {
+    for (const pagina of doc.paginas ?? []) {
+      const original = pagina.texto ?? ''
+      const m = padrao.exec(simplificar(original))
+      if (!m || (ignorar && ignorar.test(m[0]))) continue
+      return { trecho: trechoDe(original, m.index), fonte: { arquivo: doc.arquivo, tipo: doc.tipo, pagina: pagina.pagina } }
+    }
+  }
+  return null
+}
+
+export function extrairHabilitacao(documentos) {
+  const docs = [...(documentos ?? [])].sort((a, b) => ordemDocumento(a.tipo) - ordemDocumento(b.tipo))
+  const semTexto = docs.filter((d) => !d.paginas?.some((p) => (p.texto ?? '').trim().length > 40)).map((d) => ({ arquivo: d.arquivo, tipo: d.tipo }))
+  const exigencias = []
+  for (const regra of REGRAS) {
+    const achado = procurar(docs, regra.achar)
+    if (achado) exigencias.push({ id: regra.id, nivel: regra.nivel, rotulo: regra.rotulo, ...achado })
+  }
+  const sicaf = procurar(docs, SICAF_ACEITA, IGNORAR_SICAF)
+  return {
+    exigencias,
+    sicaf: sicaf ? { citado: true, ...sicaf } : { citado: false },
+    semTexto,
+    documentos: docs.map((d) => ({ arquivo: d.arquivo, tipo: d.tipo, paginas: d.paginas?.length ?? 0 })),
+  }
+}

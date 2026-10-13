@@ -2,6 +2,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { extrairObservacoes } from '../src/domain/edital/observacoes.js'
+import { extrairHabilitacao } from '../src/domain/edital/habilitacao.js'
 import { textosDoEdital } from './texto-pdf.mjs'
 import { baixarEdital, lerManifesto, parseEditalRef, pastaDoEdital } from './baixar-arquivos.mjs'
 
@@ -36,6 +37,12 @@ export async function tratarPedido(req, res) {
     if (!m) return json(res, 200, { baixado: false, ...extrairObservacoes([]) })
     const textos = await textosDoEdital(pastaDoEdital(ref), m.arquivos.filter((a) => a.arquivo))
     return json(res, 200, { baixado: true, ...extrairObservacoes(textos) })
+  }
+  if (url.pathname === '/api/editais/habilitacao' && req.method === 'GET') {
+    const m = lerManifesto(ref)
+    if (!m) return json(res, 200, { baixado: false, ...extrairHabilitacao([]) })
+    const textos = await textosDoEdital(pastaDoEdital(ref), m.arquivos.filter((a) => a.arquivo))
+    return json(res, 200, { baixado: true, ...extrairHabilitacao(textos) })
   }
   if (url.pathname === '/api/editais/arquivo' && req.method === 'GET') {
     const nome = url.searchParams.get('nome') ?? ''

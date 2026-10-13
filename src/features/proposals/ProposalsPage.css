@@ -113,3 +113,19 @@
 .notes-quote small { color: #9aa39e; font-size: 10px; display: block; margin-bottom: 6px; }
 .notes-disclaimer { margin: 10px 0 0; color: #9aa39e; font-size: 10px; }
 @media (max-width: 700px) { .notes-row { grid-template-columns: 1fr; gap: 2px; } }
+
+.hab-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-bottom: 14px; }
+.hab-summary small { display: block; color: #6b756f; font-size: 10px; }
+.hab-summary b { font-size: 16px; color: #27352e; }
+.hab-summary .proposals-primary { margin-left: auto; }
+.hab-bad b, .hab-bad { color: #b3261e; }
+.hab-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 8px 0; border-bottom: 1px solid #f0f3f1; font-size: 12px; }
+.hab-main { flex: 1 1 320px; }
+.hab-main .text-action { margin-left: 10px; font-size: 11px; }
+.hab-row select, .hab-date input { font: inherit; font-size: 12px; padding: 3px 6px; }
+.hab-date { color: #6b756f; font-size: 11px; }
+.hab-flag { font-size: 11px; color: #8a6d1d; }
+.hab-flag.hab-bad { color: #b3261e; font-weight: 600; }
+.hab-wide { flex-basis: 100%; }
+.hab-note { margin: 0 0 6px; font-size: 12px; color: #4a3d12; }
+.hab-quote { margin: 0 0 4px; font-size: 11px; line-height: 1.5; color: #435048; }

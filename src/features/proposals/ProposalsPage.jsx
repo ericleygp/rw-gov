@@ -4,6 +4,7 @@ import { getRealData, isRealData } from '../../data/realData.js'
 import { loadFullItems } from '../../data/fullItems.js'
 import EditalFiles from './EditalFiles.jsx'
 import EditalNotes from './EditalNotes.jsx'
+import HabilitacaoEdital from './HabilitacaoEdital.jsx'
 import { applyCatalogPrices, applyTargetMargin, initialLines, lineMetrics, normalizeEditalItems, summarize, toCsv, upgradeProposalItems } from '../../domain/proposal/proposal.js'
 import { normalizeText } from '../../utils/normalizeText.js'
 import { getSessionTiming } from '../dashboard/utils/sessionTiming.js'
@@ -178,6 +179,7 @@ function ProposalsPage() {
             <div className="proposal-tabs" role="tablist">
               <button type="button" role="tab" aria-selected={aba === 'itens'} className={aba === 'itens' ? 'active' : ''} onClick={() => setAba('itens')}>Itens da proposta</button>
               <button type="button" role="tab" aria-selected={aba === 'observacoes'} className={aba === 'observacoes' ? 'active' : ''} onClick={() => setAba('observacoes')}>Observações do edital</button>
+              <button type="button" role="tab" aria-selected={aba === 'habilitacao'} className={aba === 'habilitacao' ? 'active' : ''} onClick={() => setAba('habilitacao')}>Habilitação do edital</button>
             </div>
             {aba === 'itens' && <>
             <div className="proposal-tools">
@@ -210,7 +212,9 @@ function ProposalsPage() {
               {summary.missingPrice + summary.aboveReference + summary.belowCost === 0 && summary.included > 0 && <span className="alert-ok">Sem pendências</span>}
             </div>
           </section>
-          </> : <EditalNotes key={proposal.opportunityId} link={proposal.link} />}
+          </> : aba === 'habilitacao'
+            ? <HabilitacaoEdital key={proposal.opportunityId} link={proposal.link} sessionAt={proposal.sessionAt} />
+            : <EditalNotes key={proposal.opportunityId} link={proposal.link} />}
         </>}
     </main>
   </div>
