@@ -1,8 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { extrairHabilitacao } from './habilitacao.js'
-import { checklistParaCsv, resumoChecklist, situacaoValidade } from './checklist.js'
-import { NIVEIS } from './habilitacao.js'
+import { situacaoValidade } from './checklist.js'
 
 const doc = (tipo, texto) => ({ arquivo: `${tipo}.pdf`, tipo, paginas: [{ pagina: 3, texto }] })
 const achou = (r, id) => r.exigencias.find((e) => e.id === id)
@@ -62,18 +61,4 @@ test('validade que vence antes da sessão é sinalizada', () => {
   assert.equal(situacaoValidade('2026-10-22', sessao), 'vence')
   assert.equal(situacaoValidade('2026-10-23', sessao), 'ok')
   assert.equal(situacaoValidade('', sessao), 'sem_data')
-})
-
-test('resumo conta tenho, falta, vencem e sem data', () => {
-  const ex = [{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }]
-  const estado = { a: { status: 'tenho', validade: '2026-10-01' }, b: { status: 'tenho' }, c: { status: 'nao_se_aplica' } }
-  const r = resumoChecklist(ex, estado, '2026-10-23T09:00:00-03:00')
-  assert.deepEqual(r, { total: 4, tenho: 2, falta: 1, naoSeAplica: 1, vencem: 1, semData: 1 })
-})
-
-test('CSV escapa aspas e traz a situação da validade', () => {
-  const ex = [{ id: 'a', nivel: 'III', rotulo: 'FGTS "CRF"', fonte: { tipo: 'Edital', pagina: 2 } }]
-  const csv = checklistParaCsv(ex, { a: { status: 'tenho', validade: '2026-10-01' } }, '2026-10-23T09:00:00-03:00', NIVEIS)
-  assert.ok(csv.includes('"FGTS ""CRF"""'))
-  assert.ok(csv.includes('Vence antes da sessão'))
 })

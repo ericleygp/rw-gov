@@ -53,20 +53,34 @@ function ordemDocumento(tipo = '') {
 
 function trechoDe(original, indice) {
   const ini = Math.max(0, indice - 80)
-  const fim = Math.min(original.length, indice + 300)
+  const fim = Math.min(original.length, indice + 900)
   let trecho = original.slice(ini, fim).replace(/\s+/g, ' ').trim()
   if (ini > 0) trecho = `…${trecho}`
   if (fim < original.length) trecho = `${trecho}…`
   return trecho
 }
 
+// Quando o edital pede o documento: junto da proposta ou só de quem for classificado em 1º lugar.
+const SO_ARREMATANTE = /(arrematante|primeiro colocado|primeira colocada|classificad[oa] em primeiro|melhor classificad|vencedor|declarad[oa] vencedor|convocad[oa]s? para (?:apresentar|enviar|encaminhar)|apos (?:a )?(?:fase de lances|aceitacao|negociacao|convocacao))/
+const COM_PROPOSTA = /(junto (?:com )?a proposta|juntamente com a proposta|com a proposta|no cadastramento da proposta|no envio da proposta|ate a (?:data|hora) (?:e horario )?(?:da|de) abertura)/
+// O documento vale para o item que a empresa disputa ou para a empresa toda.
+const POR_ITEM = /(item de interesse|por item|cada item|item licitado|item ofertado|itens? cotados?|itens? que pretende|itens? (?:pelo|pelos) qua\w+ (?:concorr|disput))/
+
+export function classificarContexto(simples, indice) {
+  const janela = simples.slice(Math.max(0, indice - 200), indice + 900)
+  const arrematante = SO_ARREMATANTE.test(janela)
+  const proposta = COM_PROPOSTA.test(janela)
+  return { momento: arrematante && !proposta ? 'arrematante' : proposta ? 'proposta' : 'indefinido', escopo: POR_ITEM.test(janela) ? 'por_item' : 'empresa' }
+}
+
 function procurar(docs, padrao, ignorar) {
   for (const doc of docs) {
     for (const pagina of doc.paginas ?? []) {
       const original = pagina.texto ?? ''
-      const m = padrao.exec(simplificar(original))
+      const simples = simplificar(original)
+      const m = padrao.exec(simples)
       if (!m || (ignorar && ignorar.test(m[0]))) continue
-      return { trecho: trechoDe(original, m.index), fonte: { arquivo: doc.arquivo, tipo: doc.tipo, pagina: pagina.pagina } }
+      return { trecho: trechoDe(original, m.index), fonte: { arquivo: doc.arquivo, tipo: doc.tipo, pagina: pagina.pagina }, ...classificarContexto(simples, m.index) }
     }
   }
   return null

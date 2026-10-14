@@ -114,18 +114,26 @@
 .notes-disclaimer { margin: 10px 0 0; color: #9aa39e; font-size: 10px; }
 @media (max-width: 700px) { .notes-row { grid-template-columns: 1fr; gap: 2px; } }
 
-.hab-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-bottom: 14px; }
-.hab-summary small { display: block; color: #6b756f; font-size: 10px; }
-.hab-summary b { font-size: 16px; color: #27352e; }
-.hab-summary .proposals-primary { margin-left: auto; }
-.hab-bad b, .hab-bad { color: #b3261e; }
+.hab-verdict { display: grid; gap: 6px; margin-bottom: 14px; padding: 12px 14px; border-radius: 9px; border: 1px solid #cfe8d8; background: #f6fbf8; font-size: 12px; }
+.hab-verdict b { font-size: 14px; }
+.hab-verdict.hab-atencao { background: #fff7e6; border-color: #f1deae; }
+.hab-verdict.hab-pendente { background: #fdecea; border-color: #f0c4bf; }
+.hab-verdict.hab-sem_dados { background: #f3f5f4; border-color: #e3e9e5; }
+.hab-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.hab-actions button { font: inherit; font-size: 12px; padding: 5px 10px; cursor: pointer; }
+.hab-profile { margin-bottom: 14px; padding: 12px 14px; border: 1px solid #e3e9e5; border-radius: 9px; font-size: 12px; }
+.hab-profile h3 { margin: 6px 0; font-size: 12px; }
+.hab-levels, .hab-dates { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-bottom: 8px; }
+.hab-dates label { display: grid; gap: 2px; color: #6b756f; }
+.hab-dates input { font: inherit; font-size: 12px; padding: 3px 6px; }
+.hab-reason { display: block; color: #6b756f; font-size: 11px; }
+.hab-badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: #eef2ef; color: #435048; }
+.hab-s-tenho { background: #e3f4ea; color: #1f7a4d; }
+.hab-s-falta, .hab-s-vence { background: #fdecea; color: #b3261e; }
+.hab-s-sem_data, .hab-s-conferir, .hab-s-depois { background: #fff2cc; color: #8a6d1d; }
 .hab-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 8px 0; border-bottom: 1px solid #f0f3f1; font-size: 12px; }
 .hab-main { flex: 1 1 320px; }
 .hab-main .text-action { margin-left: 10px; font-size: 11px; }
-.hab-row select, .hab-date input { font: inherit; font-size: 12px; padding: 3px 6px; }
-.hab-date { color: #6b756f; font-size: 11px; }
-.hab-flag { font-size: 11px; color: #8a6d1d; }
-.hab-flag.hab-bad { color: #b3261e; font-weight: 600; }
 .hab-wide { flex-basis: 100%; }
 .hab-note { margin: 0 0 6px; font-size: 12px; color: #4a3d12; }
 .hab-quote { margin: 0 0 4px; font-size: 11px; line-height: 1.5; color: #435048; }

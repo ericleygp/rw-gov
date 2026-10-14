@@ -121,6 +121,8 @@ function ProposalsPage() {
 
   const filteredOptions = opportunities.filter((item) => !query.trim() || normalizeText(`${item.agency} ${item.title} ${item.city}`).includes(normalizeText(query)))
   const summary = proposal ? summarize(proposal.items, proposal.lines) : null
+  // Itens que a empresa vai disputar (marcados na proposta): a habilitação é avaliada só para eles.
+  const itensDisputa = proposal ? proposal.items.filter((item) => proposal.lines[item.id]?.include).map((item) => item.description) : []
   const visibleItems = proposal ? proposal.items.filter((item) => {
     const line = proposal.lines[item.id]
     if (filter === 'correspondencia') return Boolean(item.match)
@@ -213,7 +215,7 @@ function ProposalsPage() {
             </div>
           </section>
           </> : aba === 'habilitacao'
-            ? <HabilitacaoEdital key={proposal.opportunityId} link={proposal.link} sessionAt={proposal.sessionAt} />
+            ? <HabilitacaoEdital key={proposal.opportunityId} link={proposal.link} sessionAt={proposal.sessionAt} agency={proposal.agency} itensDisputa={itensDisputa} />
             : <EditalNotes key={proposal.opportunityId} link={proposal.link} />}
         </>}
     </main>

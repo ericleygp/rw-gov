@@ -3,6 +3,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { extrairObservacoes } from '../src/domain/edital/observacoes.js'
 import { extrairHabilitacao } from '../src/domain/edital/habilitacao.js'
+import { gravarPerfil, lerPerfil } from './perfil-habilitacao.mjs'
 import { textosDoEdital } from './texto-pdf.mjs'
 import { baixarEdital, lerManifesto, parseEditalRef, pastaDoEdital } from './baixar-arquivos.mjs'
 
@@ -23,6 +24,13 @@ const json = (res, status, corpo) => { res.statusCode = status; res.setHeader('c
 
 export async function tratarPedido(req, res) {
   const url = new URL(req.url, 'http://localhost')
+  if (url.pathname === '/api/editais/perfil') {
+    if (req.method === 'GET') return json(res, 200, lerPerfil())
+    if (req.method === 'PUT') {
+      const corpo = await new Promise((resolve) => { let t = ''; req.on('data', (c) => { t += c }); req.on('end', () => resolve(t)) })
+      try { return json(res, 200, gravarPerfil(JSON.parse(corpo))) } catch { return json(res, 400, { erro: 'Perfil inválido.' }) }
+    }
+  }
   const ref = parseEditalRef(url.searchParams.get('ref'))
   if (!ref) return json(res, 400, { erro: 'Edital inválido (use o link do PNCP).' })
   if (url.pathname === '/api/editais/arquivos' && req.method === 'GET') return json(res, 200, resumo(ref))
