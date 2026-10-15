@@ -1,6 +1,6 @@
 .map-page { display: grid; gap: 16px; }
 .map-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
-.map-eyebrow { font-size: 11px; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+.map-eyebrow { font-size: 13px; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
 .map-header h1 { margin: 4px 0; font-size: 30px; }
 .map-header p { margin: 0; color: #5b6762; }
 .map-source { font-size: 12px; color: #5b6762; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; }
@@ -19,7 +19,7 @@
 .city-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
 .city-head small { color: var(--muted); }
 .city-score { color: #fff; border-radius: 12px; padding: 6px 12px; font-size: 24px; font-weight: 700; display: grid; text-align: center; line-height: 1.1; }
-.city-score small { color: #fff; font-size: 10px; font-weight: 600; }
+.city-score small { color: #fff; font-size: 12px; font-weight: 600; }
 .score-bar { display: grid; grid-template-columns: 150px 1fr 48px; gap: 8px; align-items: center; font-size: 12px; }
 .score-bar-track { height: 7px; background: #edf1ef; border-radius: 999px; overflow: hidden; }
 .score-bar-track i { display: block; height: 100%; background: var(--green); }
@@ -29,7 +29,7 @@
 .city-opps li { display: grid; gap: 3px; font-size: 12.5px; border-top: 1px solid var(--line); padding-top: 10px; }
 .city-opps li span { color: #5b6762; }
 .city-opp-meta { display: flex; flex-wrap: wrap; gap: 6px; }
-.city-opp-meta em { font-style: normal; font-size: 11.5px; color: #5b6762; }
+.city-opp-meta em { font-style: normal; font-size: 13px; color: #5b6762; }
 .chip { background: #eef3f0; border-radius: 999px; padding: 2px 8px; }
 .chip-alta { background: #d7efe3; color: #0f6b4a !important; }
 .chip-media { background: #fbf0cf; color: #7a5a06 !important; }

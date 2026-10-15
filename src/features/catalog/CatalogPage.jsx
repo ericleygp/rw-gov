@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { usePersistentState } from '../../utils/usePersistentState.js'
 import { clearImportedCatalog, getImportedCatalogInfo, listProducts, saveImportedCatalog } from './repositories/productRepository.js'
 import { csvRowToProduct, MAX_CSV_BYTES, validateCatalogCsv } from './csvImport.js'
 import { formatCurrency, formatStock } from '../../utils/formatCatalogValue.js'
@@ -6,7 +7,7 @@ import './CatalogPage.css'
 
 function CatalogPage() {
   const [, setRevision] = useState(0)
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = usePersistentState('catalogo.busca', '', (v) => typeof v === 'string')
   const [preview, setPreview] = useState(null)
   const [error, setError] = useState('')
   const [selected, setSelected] = useState(null)

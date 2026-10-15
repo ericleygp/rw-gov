@@ -1,4 +1,5 @@
 import { Component, useMemo, useState } from 'react'
+import { usePersistentState } from '../../utils/usePersistentState.js'
 import { listOpportunities } from './repositories/opportunityRepository.js'
 import { listMatchesByOpportunityId } from '../matching/repositories/matchRepository.js'
 import { opportunityStatuses } from './model/opportunity.js'
@@ -11,6 +12,7 @@ import './OpportunitiesPage.css'
 const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 })
 const REAL = isRealData()
 const TODAS_PARTICIPACOES = 'Todas as participações'
+const VALUE_BANDS = ['Qualquer valor', 'Até R$ 50 mil', 'R$ 50 mil a R$ 150 mil', 'Acima de R$ 150 mil']
 const money = (value) => (Number.isFinite(value) ? currency.format(value) : 'Não informado')
 const formatPublished = (value) => { const date = new Date(`${value}T12:00:00Z`); return Number.isNaN(date.getTime()) ? 'Não informado' : dateFormat.format(date) }
 const opportunities = listOpportunities()
@@ -32,13 +34,13 @@ function formatDeadline(date) {
 }
 
 function OpportunitiesPage({ onNavigate }) {
-  const [search, setSearch] = useState('')
-  const [status, setStatus] = useState('Todas as situações')
-  const [category, setCategory] = useState('Todas as categorias')
-  const [state, setState] = useState('Todos os estados')
-  const [modality, setModality] = useState('Todas as modalidades')
-  const [valueBand, setValueBand] = useState('Qualquer valor')
-  const [participation, setParticipation] = useState(() => (opportunities.some((item) => item.participacao?.grupo !== 'sem_avaliacao') ? GRUPOS.possivel : TODAS_PARTICIPACOES))
+  const [search, setSearch] = usePersistentState('radar.busca', '', (v) => typeof v === 'string')
+  const [status, setStatus] = usePersistentState('radar.situacao', 'Todas as situações', (v) => ['Todas as situações', ...opportunityStatuses].includes(v))
+  const [category, setCategory] = usePersistentState('radar.categoria', 'Todas as categorias', (v) => v === 'Todas as categorias' || opportunities.some((item) => item.category === v))
+  const [state, setState] = usePersistentState('radar.estado', 'Todos os estados', (v) => v === 'Todos os estados' || opportunities.some((item) => item.state === v))
+  const [modality, setModality] = usePersistentState('radar.modalidade', 'Todas as modalidades', (v) => v === 'Todas as modalidades' || opportunities.some((item) => item.modality === v))
+  const [valueBand, setValueBand] = usePersistentState('radar.valor', 'Qualquer valor', (v) => VALUE_BANDS.includes(v))
+  const [participation, setParticipation] = usePersistentState('radar.participacao', () => (opportunities.some((item) => item.participacao?.grupo !== 'sem_avaliacao') ? GRUPOS.possivel : TODAS_PARTICIPACOES), (v) => v === TODAS_PARTICIPACOES || Object.values(GRUPOS).includes(v))
   const [selectedId, setSelectedId] = useState(null)
 
   const categories = [...new Set(opportunities.map((item) => item.category))].sort()
@@ -76,6 +78,7 @@ function OpportunitiesPage({ onNavigate }) {
     setState('Todos os estados')
     setModality('Todas as modalidades')
     setValueBand('Qualquer valor')
+    setParticipation(TODAS_PARTICIPACOES)
   }
 
   return <div className="opportunities-page">
@@ -98,7 +101,7 @@ function OpportunitiesPage({ onNavigate }) {
         <FilterSelect label="Estado" value={state} onChange={setState} options={['Todos os estados', ...states]} />
         <FilterSelect label="Modalidade" value={modality} onChange={setModality} options={['Todas as modalidades', ...modalities]} />
         {REAL && <FilterSelect label="Participação" value={participation} onChange={setParticipation} options={[TODAS_PARTICIPACOES, ...Object.values(GRUPOS)]} />}
-        <FilterSelect label="Faixa de valor" value={valueBand} onChange={setValueBand} options={['Qualquer valor', 'Até R$ 50 mil', 'R$ 50 mil a R$ 150 mil', 'Acima de R$ 150 mil']} />
+        <FilterSelect label="Faixa de valor" value={valueBand} onChange={setValueBand} options={VALUE_BANDS} />
       </div>
       <div className="radar-table-wrap"><table className="radar-table"><thead><tr><th>OPORTUNIDADE / ÓRGÃO</th><th>MUNICÍPIO / UF</th><th>{REAL ? 'RELEVÂNCIA' : 'CATEGORIA'}</th><th>MODALIDADE</th><th>VALOR ESTIMADO</th><th>PRAZO / SESSÃO</th><th>SITUAÇÃO</th><th><span className="sr-only">Detalhes</span></th></tr></thead><tbody>
         {filteredOpportunities.map((item) => <tr key={item.id} onClick={() => setSelectedId(item.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') setSelectedId(item.id) }} tabIndex="0" aria-label={`Ver detalhes de ${item.title}`}>

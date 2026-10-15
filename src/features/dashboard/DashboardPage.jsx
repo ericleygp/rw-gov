@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { usePersistentState } from '../../utils/usePersistentState.js'
 import { listOpportunityItems } from '../opportunities/repositories/itemRepository.js'
 import { listOpportunities } from '../opportunities/repositories/opportunityRepository.js'
 import { opportunityStatuses } from '../opportunities/model/opportunity.js'
@@ -17,8 +18,8 @@ const deadlineFormat = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month:
 
 function DashboardPage({ onNavigate }) {
   const [now, setNow] = useState(() => new Date())
-  const [search, setSearch] = useState('')
-  const [cityFilter, setCityFilter] = useState('')
+  const [search, setSearch] = usePersistentState('dashboard.busca', '', (v) => typeof v === 'string')
+  const [storedCity, setCityFilter] = usePersistentState('dashboard.municipio', '', (v) => typeof v === 'string')
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 60_000)
@@ -40,6 +41,7 @@ function DashboardPage({ onNavigate }) {
     .filter(({ timing }) => !timing.hasPassed && timing.daysRemaining >= 0 && timing.daysRemaining <= 7)
     .sort((a, b) => new Date(a.item.sessionAt) - new Date(b.item.sessionAt))
   const cityOptions = [...new Set(upcomingDeadlines.map(({ item }) => item.city).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'))
+  const cityFilter = cityOptions.includes(storedCity) ? storedCity : ''
   const searchTerm = normalizeText(search)
   const filteredDeadlines = upcomingDeadlines.filter(({ item }) => (!cityFilter || item.city === cityFilter) && (!searchTerm || normalizeText(`${item.title} ${item.agency} ${item.city}`).includes(searchTerm)))
   const hasFilter = Boolean(search || cityFilter)
