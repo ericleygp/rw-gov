@@ -18,3 +18,23 @@ export async function loadRealData(url = `${import.meta.env?.BASE_URL ?? '/'}dad
     return isRealData()
   } catch { return false }
 }
+
+// Veredito de habilitação por edital (scripts/avaliar-habilitacao.mjs). Opcional: sem o arquivo, nada é classificado.
+let habilitacao = null
+
+export function setHabilitacao(data) {
+  habilitacao = data && typeof data.editais === 'object' && data.editais !== null ? data : null
+}
+
+export function getHabilitacao(id) { return habilitacao?.editais?.[id] ?? null }
+
+export function temHabilitacao() { return habilitacao !== null && Object.keys(habilitacao.editais).length > 0 }
+
+export async function loadHabilitacao(url = `${import.meta.env?.BASE_URL ?? '/'}dados-locais/habilitacao-avaliada.json`) {
+  try {
+    const response = await fetch(url, { cache: 'no-store' })
+    if (!response.ok) return false
+    setHabilitacao(JSON.parse(await response.text()))
+    return temHabilitacao()
+  } catch { return false }
+}

@@ -4,11 +4,13 @@ import { listMatchesByOpportunityId } from '../matching/repositories/matchReposi
 import { opportunityStatuses } from './model/opportunity.js'
 import { normalizeText } from '../../utils/normalizeText.js'
 import { isRealData } from '../../data/realData.js'
+import { GRUPOS } from '../../domain/edital/participacao.js'
 import { getSessionTiming } from '../dashboard/utils/sessionTiming.js'
 import './OpportunitiesPage.css'
 
 const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 })
 const REAL = isRealData()
+const TODAS_PARTICIPACOES = 'Todas as participações'
 const money = (value) => (Number.isFinite(value) ? currency.format(value) : 'Não informado')
 const formatPublished = (value) => { const date = new Date(`${value}T12:00:00Z`); return Number.isNaN(date.getTime()) ? 'Não informado' : dateFormat.format(date) }
 const opportunities = listOpportunities()
@@ -36,6 +38,7 @@ function OpportunitiesPage({ onNavigate }) {
   const [state, setState] = useState('Todos os estados')
   const [modality, setModality] = useState('Todas as modalidades')
   const [valueBand, setValueBand] = useState('Qualquer valor')
+  const [participation, setParticipation] = useState(() => (opportunities.some((item) => item.participacao?.grupo !== 'sem_avaliacao') ? GRUPOS.possivel : TODAS_PARTICIPACOES))
   const [selectedId, setSelectedId] = useState(null)
 
   const categories = [...new Set(opportunities.map((item) => item.category))].sort()
@@ -57,8 +60,9 @@ function OpportunitiesPage({ onNavigate }) {
         && (state === 'Todos os estados' || item.state === state)
         && (modality === 'Todas as modalidades' || item.modality === modality)
         && matchesValue
+        && (participation === TODAS_PARTICIPACOES || GRUPOS[item.participacao?.grupo ?? 'sem_avaliacao'] === participation)
     })
-  }, [search, status, category, state, modality, valueBand])
+  }, [search, status, category, state, modality, valueBand, participation])
 
   const openCount = opportunities.filter((item) => ['Aberta', 'Recebendo propostas'].includes(item.status)).length
   const upcomingCount = opportunities.filter((item) => daysUntil(item.sessionAt) >= 0 && daysUntil(item.sessionAt) <= 7).length
@@ -93,13 +97,14 @@ function OpportunitiesPage({ onNavigate }) {
         <FilterSelect label="Categoria" value={category} onChange={setCategory} options={['Todas as categorias', ...categories]} />
         <FilterSelect label="Estado" value={state} onChange={setState} options={['Todos os estados', ...states]} />
         <FilterSelect label="Modalidade" value={modality} onChange={setModality} options={['Todas as modalidades', ...modalities]} />
+        {REAL && <FilterSelect label="Participação" value={participation} onChange={setParticipation} options={[TODAS_PARTICIPACOES, ...Object.values(GRUPOS)]} />}
         <FilterSelect label="Faixa de valor" value={valueBand} onChange={setValueBand} options={['Qualquer valor', 'Até R$ 50 mil', 'R$ 50 mil a R$ 150 mil', 'Acima de R$ 150 mil']} />
       </div>
       <div className="radar-table-wrap"><table className="radar-table"><thead><tr><th>OPORTUNIDADE / ÓRGÃO</th><th>MUNICÍPIO / UF</th><th>{REAL ? 'RELEVÂNCIA' : 'CATEGORIA'}</th><th>MODALIDADE</th><th>VALOR ESTIMADO</th><th>PRAZO / SESSÃO</th><th>SITUAÇÃO</th><th><span className="sr-only">Detalhes</span></th></tr></thead><tbody>
         {filteredOpportunities.map((item) => <tr key={item.id} onClick={() => setSelectedId(item.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') setSelectedId(item.id) }} tabIndex="0" aria-label={`Ver detalhes de ${item.title}`}>
           <td><div className="radar-title-cell"><span className="radar-row-icon">▤</span><span><strong>{item.title}</strong><small>{item.agency}</small><em>{REAL ? 'Fonte: PNCP' : 'Demonstração — dado simulado'}</em></span></div></td>
           <td><strong className="radar-cell-primary">{item.city}</strong><small className="radar-cell-secondary">{item.state}</small></td>
-          <td><span className="category-chip">{item.relevancia ? `${item.relevancia} · ${item.produtosDistintos} produtos` : item.category}</span></td>
+          <td><span className="category-chip">{item.relevancia ? `${item.relevancia} · ${item.produtosDistintos} produtos` : item.category}</span>{item.participacao && item.participacao.grupo !== 'sem_avaliacao' && <span className={`part-chip part-${item.participacao.grupo}`} title={[...(item.participacao.faltam ?? []), ...(item.participacao.conferir ?? [])].join('; ')}>{item.participacao.rotulo}</span>}{item.participacao?.faltam?.length > 0 && <small className="radar-cell-secondary">Falta: {item.participacao.faltam.slice(0, 2).join('; ')}</small>}</td>
           <td><span className="radar-cell-primary">{item.modality}</span><small className="radar-cell-secondary">{item.processNumber}</small></td>
           <td className="radar-value">{money(item.estimatedValue)}</td>
           <td><strong className="radar-cell-primary">{dateFormat.format(new Date(item.sessionAt))}</strong><small className={`radar-cell-secondary${daysUntil(item.sessionAt) <= 7 && daysUntil(item.sessionAt) >= 0 ? ' deadline-near' : ''}`}>{formatDeadline(item.sessionAt)}</small></td>
