@@ -103,6 +103,10 @@ export async function baixarEdital({ cnpj, ano, seq }) {
     console.log(`  ${id}: ${nome} (${Math.round(res.bytes.length / 1024)} KB)`)
     await dormir(PAUSA_MS)
   }
+  // PDFs tirados de ZIPs (scripts/extrair-zip.mjs) continuam registrados quando a lista é refeita.
+  for (const extra of anterior.arquivos ?? []) {
+    if (extra.origem && extra.arquivo && fs.existsSync(path.join(pasta, extra.arquivo)) && !arquivos.some((a) => a.arquivo === extra.arquivo)) arquivos.push(extra)
+  }
   // "bruto" guarda exatamente o que o PNCP devolveu, para conferir o formato real se algo não bater.
   fs.writeFileSync(manifestoPath, JSON.stringify({ id, baixadoEm: new Date().toISOString(), arquivos, bruto: lista.json }, null, 1))
   return { id, ok: true, novos, total: arquivos.filter((a) => a.arquivo).length }
