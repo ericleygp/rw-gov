@@ -1,0 +1,74 @@
+{
+ "id": "34621748000123-2026-582",
+ "baixadoEm": "2026-10-15T16:16:15.735Z",
+ "arquivos": [
+  {
+   "seq": 1,
+   "titulo": "AC153063_000179_2026.pdf",
+   "tipo": "Aviso de Contratação Direta",
+   "arquivo": "01-Aviso-de-Contratacao-Direta.pdf",
+   "bytes": 100970,
+   "status": 200
+  },
+  {
+   "seq": 2,
+   "titulo": "TR153063_001031_2026.pdf",
+   "tipo": "Ato que autoriza a Contratação Direta",
+   "arquivo": "02-Ato-que-autoriza-a-Contratacao-Direta.pdf",
+   "bytes": 144417,
+   "status": 200
+  },
+  {
+   "seq": 3,
+   "titulo": "1031/2026.pdf",
+   "tipo": "Termo de Referência",
+   "arquivo": "03-Termo-de-Referencia.pdf",
+   "bytes": 157230,
+   "status": 200
+  }
+ ],
+ "bruto": [
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/34621748000123/compras/2026/582/arquivos/1",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/34621748000123/compras/2026/582/arquivos/1",
+   "tipoDocumentoNome": "Aviso de Contratação Direta",
+   "tipoDocumentoDescricao": "Aviso de Contratação Direta",
+   "statusAtivo": true,
+   "cnpj": "34621748000123",
+   "anoCompra": 2026,
+   "sequencialCompra": 582,
+   "dataPublicacaoPncp": "2026-10-15T11:19:35",
+   "sequencialDocumento": 1,
+   "titulo": "AC153063_000179_2026.pdf",
+   "tipoDocumentoId": 1
+  },
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/34621748000123/compras/2026/582/arquivos/2",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/34621748000123/compras/2026/582/arquivos/2",
+   "tipoDocumentoNome": "Ato que autoriza a Contratação Direta",
+   "tipoDocumentoDescricao": "Ato que autoriza a Contratação Direta",
+   "statusAtivo": true,
+   "cnpj": "34621748000123",
+   "anoCompra": 2026,
+   "sequencialCompra": 582,
+   "dataPublicacaoPncp": "2026-10-15T11:20:38",
+   "sequencialDocumento": 2,
+   "titulo": "TR153063_001031_2026.pdf",
+   "tipoDocumentoId": 20
+  },
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/34621748000123/compras/2026/582/arquivos/3",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/34621748000123/compras/2026/582/arquivos/3",
+   "tipoDocumentoNome": "Termo de Referência",
+   "tipoDocumentoDescricao": "Termo de Referência",
+   "statusAtivo": true,
+   "cnpj": "34621748000123",
+   "anoCompra": 2026,
+   "sequencialCompra": 582,
+   "dataPublicacaoPncp": "2026-10-15T11:20:42",
+   "sequencialDocumento": 3,
+   "titulo": "1031/2026.pdf",
+   "tipoDocumentoId": 4
+  }
+ ]
+}

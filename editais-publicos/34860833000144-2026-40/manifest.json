@@ -1,0 +1,118 @@
+{
+ "id": "34860833000144-2026-40",
+ "baixadoEm": "2026-10-15T21:50:22.578Z",
+ "arquivos": [
+  {
+   "seq": 1,
+   "titulo": "2. ETP ATUALIZADO.pdf",
+   "tipo": "Estudo Técnico Preliminar",
+   "arquivo": "01-Estudo-Tecnico-Preliminar.pdf",
+   "bytes": 516536,
+   "status": 200
+  },
+  {
+   "seq": 2,
+   "titulo": "3. ANALISE DE RISCO - PE - TRADICIONAL - 90.022-2026.pdf",
+   "tipo": "Mapa de Riscos",
+   "arquivo": "02-Mapa-de-Riscos.pdf",
+   "bytes": 436565,
+   "status": 200
+  },
+  {
+   "seq": 3,
+   "titulo": "1. TERMO DE REFERENCIA ATUALIZADO.pdf",
+   "tipo": "Termo de Referência",
+   "arquivo": "03-Termo-de-Referencia.pdf",
+   "bytes": 157881,
+   "status": 200
+  },
+  {
+   "seq": 4,
+   "titulo": "4. DECLARACAO SUSTENTABILIDADE PE 90.022-2026 Anexo IV.pdf",
+   "tipo": "Outros Documentos",
+   "arquivo": "04-Outros-Documentos.pdf",
+   "bytes": 116034,
+   "status": 200
+  },
+  {
+   "seq": 5,
+   "titulo": "EDITAL PE TRADICIONAL PE 90022-2026 COMPLETO PUBLICACAO.pdf",
+   "tipo": "Edital",
+   "arquivo": "05-Edital.pdf",
+   "bytes": 1993032,
+   "status": 200
+  }
+ ],
+ "bruto": [
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/34860833000144/compras/2026/40/arquivos/1",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/34860833000144/compras/2026/40/arquivos/1",
+   "statusAtivo": true,
+   "cnpj": "34860833000144",
+   "anoCompra": 2026,
+   "sequencialCompra": 40,
+   "dataPublicacaoPncp": "2026-10-06T13:56:48",
+   "sequencialDocumento": 1,
+   "titulo": "2. ETP ATUALIZADO.pdf",
+   "tipoDocumentoNome": "Estudo Técnico Preliminar",
+   "tipoDocumentoDescricao": "Estudo Técnico Preliminar",
+   "tipoDocumentoId": 7
+  },
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/34860833000144/compras/2026/40/arquivos/2",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/34860833000144/compras/2026/40/arquivos/2",
+   "statusAtivo": true,
+   "cnpj": "34860833000144",
+   "anoCompra": 2026,
+   "sequencialCompra": 40,
+   "dataPublicacaoPncp": "2026-10-06T13:57:49",
+   "sequencialDocumento": 2,
+   "titulo": "3. ANALISE DE RISCO - PE - TRADICIONAL - 90.022-2026.pdf",
+   "tipoDocumentoNome": "Mapa de Riscos",
+   "tipoDocumentoDescricao": "Mapa de Riscos",
+   "tipoDocumentoId": 9
+  },
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/34860833000144/compras/2026/40/arquivos/3",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/34860833000144/compras/2026/40/arquivos/3",
+   "statusAtivo": true,
+   "cnpj": "34860833000144",
+   "anoCompra": 2026,
+   "sequencialCompra": 40,
+   "dataPublicacaoPncp": "2026-10-06T13:57:49",
+   "sequencialDocumento": 3,
+   "titulo": "1. TERMO DE REFERENCIA ATUALIZADO.pdf",
+   "tipoDocumentoNome": "Termo de Referência",
+   "tipoDocumentoDescricao": "Termo de Referência",
+   "tipoDocumentoId": 4
+  },
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/34860833000144/compras/2026/40/arquivos/4",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/34860833000144/compras/2026/40/arquivos/4",
+   "statusAtivo": true,
+   "cnpj": "34860833000144",
+   "anoCompra": 2026,
+   "sequencialCompra": 40,
+   "dataPublicacaoPncp": "2026-10-06T13:57:52",
+   "sequencialDocumento": 4,
+   "titulo": "4. DECLARACAO SUSTENTABILIDADE PE 90.022-2026 Anexo IV.pdf",
+   "tipoDocumentoNome": "Outros Documentos",
+   "tipoDocumentoDescricao": "Outros Documentos",
+   "tipoDocumentoId": 16
+  },
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/34860833000144/compras/2026/40/arquivos/5",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/34860833000144/compras/2026/40/arquivos/5",
+   "statusAtivo": true,
+   "cnpj": "34860833000144",
+   "anoCompra": 2026,
+   "sequencialCompra": 40,
+   "dataPublicacaoPncp": "2026-10-06T13:57:57",
+   "sequencialDocumento": 5,
+   "titulo": "EDITAL PE TRADICIONAL PE 90022-2026 COMPLETO PUBLICACAO.pdf",
+   "tipoDocumentoNome": "Edital",
+   "tipoDocumentoDescricao": "Edital",
+   "tipoDocumentoId": 2
+  }
+ ]
+}

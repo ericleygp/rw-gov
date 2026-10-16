@@ -1,5 +1,6 @@
 import { Component, useMemo, useState } from 'react'
 import { usePersistentState } from '../../utils/usePersistentState.js'
+import { nomeDaRegiao } from '../../domain/regiao.js'
 import { listOpportunities } from './repositories/opportunityRepository.js'
 import { listMatchesByOpportunityId } from '../matching/repositories/matchRepository.js'
 import { opportunityStatuses } from './model/opportunity.js'
@@ -40,7 +41,7 @@ function OpportunitiesPage({ onNavigate }) {
   const [state, setState] = usePersistentState('radar.estado', 'Todos os estados', (v) => v === 'Todos os estados' || opportunities.some((item) => item.state === v))
   const [modality, setModality] = usePersistentState('radar.modalidade', 'Todas as modalidades', (v) => v === 'Todas as modalidades' || opportunities.some((item) => item.modality === v))
   const [valueBand, setValueBand] = usePersistentState('radar.valor', 'Qualquer valor', (v) => VALUE_BANDS.includes(v))
-  const [participation, setParticipation] = usePersistentState('radar.participacao', () => (opportunities.some((item) => item.participacao?.grupo !== 'sem_avaliacao') ? GRUPOS.possivel : TODAS_PARTICIPACOES), (v) => v === TODAS_PARTICIPACOES || Object.values(GRUPOS).includes(v))
+  const [participation, setParticipation] = usePersistentState('radar.participacao', () => (opportunities.some((item) => item.participacao?.grupo === 'possivel') ? GRUPOS.possivel : TODAS_PARTICIPACOES), (v) => v === TODAS_PARTICIPACOES || Object.values(GRUPOS).includes(v))
   const [selectedId, setSelectedId] = useState(null)
 
   const categories = [...new Set(opportunities.map((item) => item.category))].sort()
@@ -83,7 +84,7 @@ function OpportunitiesPage({ onNavigate }) {
 
   return <div className="opportunities-page">
     <div className="opportunity-demo-banner"><span className="demo-banner-icon">i</span><span><strong>{REAL ? 'Dados reais — PNCP' : 'Demonstração — dado simulado'}</strong><small>{REAL ? 'Oportunidades abertas lidas do Portal Nacional de Contratações Públicas. O match com o seu catálogo é automático e não confirmado.' : 'Esta base é fictícia e não representa editais publicados por órgãos reais.'}</small></span></div>
-    <section className="opportunities-heading"><div><span className="eyebrow">RADAR DE COMPRAS PÚBLICAS</span><h1>Oportunidades</h1><p>{REAL ? 'Oportunidades abertas no PNCP, ordenadas pela relevância para o seu catálogo.' : 'Explore oportunidades demonstrativas por categoria, região e prazo.'}</p></div><span className="mock-source-label"><i /> {REAL ? 'Fonte: PNCP (leitura local)' : 'Fonte: base demonstrativa local'}</span></section>
+    <section className="opportunities-heading"><div><span className="eyebrow">RADAR DE COMPRAS PÚBLICAS</span><h1>Oportunidades</h1><p>{REAL ? `Oportunidades abertas no PNCP — ${nomeDaRegiao()} — ordenadas pela relevância para o seu catálogo.` : 'Explore oportunidades demonstrativas por categoria, região e prazo.'}</p></div><span className="mock-source-label"><i /> {REAL ? 'Fonte: PNCP (leitura local)' : 'Fonte: base demonstrativa local'}</span></section>
 
     <section className="opportunity-stats" aria-label="Resumo do radar">
       <StatCard label="Total de oportunidades" value={opportunities.length} note={REAL ? 'abertas no PNCP com itens do seu catálogo' : 'na base demonstrativa'} icon="⌕" tone="violet" />

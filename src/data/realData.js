@@ -1,9 +1,13 @@
 // Dados reais (PNCP) gerados por scripts/motor-busca.mjs e lidos de /dados-locais/oportunidades-reais.json.
 // Sem o arquivo, o app continua com a base demonstrativa.
+import { filtrarPorRegiao } from '../domain/regiao.js'
+
 let realData = null
 
 export function setRealData(data) {
-  realData = data && Array.isArray(data.oportunidades) && data.oportunidades.length > 0 && Array.isArray(data.itens) ? data : null
+  const valido = data && Array.isArray(data.oportunidades) && data.oportunidades.length > 0 && Array.isArray(data.itens)
+  // Só a região de atuação (src/domain/regiao.js) chega às telas.
+  realData = valido ? filtrarPorRegiao(data) : null
 }
 
 export function getRealData() { return realData }

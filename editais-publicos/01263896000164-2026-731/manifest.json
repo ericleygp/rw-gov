@@ -1,0 +1,75 @@
+{
+ "id": "01263896000164-2026-731",
+ "baixadoEm": "2026-10-15T16:16:46.114Z",
+ "arquivos": [
+  {
+   "seq": 1,
+   "titulo": "Edital pregao Materiais de Expediente.zip",
+   "tipo": "Edital",
+   "arquivo": "01-Edital.zip",
+   "bytes": 463805,
+   "status": 200
+  },
+  {
+   "seq": 1,
+   "titulo": "SEI_14062066_Anexo 01___Termo_de_Referencia.pdf",
+   "tipo": "Edital",
+   "arquivo": "01-01-Edital-SEI-14062066-Anexo-01-Termo-de-Referencia.pdf",
+   "bytes": 152757,
+   "status": 200,
+   "origem": "01-Edital.zip"
+  },
+  {
+   "seq": 1,
+   "titulo": "SEI_14093179_Anexo_02___Minuta Ata SRP.pdf",
+   "tipo": "Edital",
+   "arquivo": "01-01-Edital-SEI-14093179-Anexo-02-Minuta-Ata-SRP.pdf",
+   "bytes": 99935,
+   "status": 200,
+   "origem": "01-Edital.zip"
+  },
+  {
+   "seq": 1,
+   "titulo": "SEI_14093180_Anexo_03___Modelo_Proposta.pdf",
+   "tipo": "Edital",
+   "arquivo": "01-01-Edital-SEI-14093180-Anexo-03-Modelo-Proposta.pdf",
+   "bytes": 55856,
+   "status": 200,
+   "origem": "01-Edital.zip"
+  },
+  {
+   "seq": 1,
+   "titulo": "SEI_14093183_Anexo_04___Declaracoes_Obrigatorias.pdf",
+   "tipo": "Edital",
+   "arquivo": "01-01-Edital-SEI-14093183-Anexo-04-Declaracoes-Obrigatorias.pdf",
+   "bytes": 59731,
+   "status": 200,
+   "origem": "01-Edital.zip"
+  },
+  {
+   "seq": 1,
+   "titulo": "SEI_14117685_Edital_30-2026.pdf",
+   "tipo": "Edital",
+   "arquivo": "01-01-Edital-SEI-14117685-Edital-30-2026.pdf",
+   "bytes": 167175,
+   "status": 200,
+   "origem": "01-Edital.zip"
+  }
+ ],
+ "bruto": [
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/01263896000164/compras/2026/731/arquivos/1",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/01263896000164/compras/2026/731/arquivos/1",
+   "statusAtivo": true,
+   "cnpj": "01263896000164",
+   "anoCompra": 2026,
+   "sequencialCompra": 731,
+   "dataPublicacaoPncp": "2026-10-15T04:00:20",
+   "sequencialDocumento": 1,
+   "titulo": "Edital pregao Materiais de Expediente.zip",
+   "tipoDocumentoNome": "Edital",
+   "tipoDocumentoDescricao": "Edital",
+   "tipoDocumentoId": 2
+  }
+ ]
+}

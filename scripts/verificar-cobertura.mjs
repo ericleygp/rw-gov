@@ -5,6 +5,7 @@
 // Variáveis: COBERTURA_MAX_TENTATIVAS (padrão 30; 0 = só conferir, sem baixar).
 import fs from 'node:fs'
 import path from 'node:path'
+import { naRegiao } from '../src/domain/regiao.js'
 import { classificarCobertura } from '../src/domain/edital/cobertura.js'
 import { extrairHabilitacao } from '../src/domain/edital/habilitacao.js'
 import { baixarEdital, lerManifesto, parseEditalRef, pastaDoEdital } from './baixar-arquivos.mjs'
@@ -21,7 +22,7 @@ async function main() {
   try { dados = JSON.parse(fs.readFileSync(ENTRADA, 'utf8')) } catch { console.log(`Não encontrei ${ENTRADA}. Rode antes o motor de busca.`); return }
   const agora = Date.now()
   const futuras = (dados.oportunidades ?? [])
-    .filter((o) => !(new Date(o.sessionAt).getTime() < agora))
+    .filter((o) => naRegiao(o) && !(new Date(o.sessionAt).getTime() < agora))
     .sort((a, b) => new Date(a.sessionAt) - new Date(b.sessionAt))
 
   let tentativas = 0

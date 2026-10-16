@@ -1,0 +1,30 @@
+{
+ "id": "08780663000188-2026-26",
+ "baixadoEm": "2026-10-15T21:49:47.507Z",
+ "arquivos": [
+  {
+   "seq": 1,
+   "titulo": "EDITAL_PREG_O_ELETR_NICO_N_90007_2026_IDEFLOR-.pdf",
+   "tipo": "Edital",
+   "arquivo": "01-Edital.pdf",
+   "bytes": 2111034,
+   "status": 200
+  }
+ ],
+ "bruto": [
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/08780663000188/compras/2026/26/arquivos/1",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/08780663000188/compras/2026/26/arquivos/1",
+   "statusAtivo": true,
+   "cnpj": "08780663000188",
+   "anoCompra": 2026,
+   "sequencialCompra": 26,
+   "dataPublicacaoPncp": "2026-10-07T14:46:11",
+   "sequencialDocumento": 1,
+   "titulo": "EDITAL_PREG_O_ELETR_NICO_N_90007_2026_IDEFLOR-.pdf",
+   "tipoDocumentoNome": "Edital",
+   "tipoDocumentoDescricao": "Edital",
+   "tipoDocumentoId": 2
+  }
+ ]
+}

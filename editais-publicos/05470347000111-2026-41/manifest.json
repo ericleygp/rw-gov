@@ -1,0 +1,30 @@
+{
+ "id": "05470347000111-2026-41",
+ "baixadoEm": "2026-10-15T21:50:11.666Z",
+ "arquivos": [
+  {
+   "seq": 1,
+   "titulo": "EDITAL 9 2026+TR+ETP+CONTRATO.pdf",
+   "tipo": "Edital",
+   "arquivo": "01-Edital.pdf",
+   "bytes": 2090974,
+   "status": 200
+  }
+ ],
+ "bruto": [
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/05470347000111/compras/2026/41/arquivos/1",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/05470347000111/compras/2026/41/arquivos/1",
+   "statusAtivo": true,
+   "cnpj": "05470347000111",
+   "anoCompra": 2026,
+   "sequencialCompra": 41,
+   "dataPublicacaoPncp": "2026-10-07T12:45:32",
+   "sequencialDocumento": 1,
+   "titulo": "EDITAL 9 2026+TR+ETP+CONTRATO.pdf",
+   "tipoDocumentoNome": "Edital",
+   "tipoDocumentoDescricao": "Edital",
+   "tipoDocumentoId": 2
+  }
+ ]
+}

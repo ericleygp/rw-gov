@@ -1,0 +1,118 @@
+{
+ "id": "04789665000187-2026-71",
+ "baixadoEm": "2026-10-15T21:52:14.697Z",
+ "arquivos": [
+  {
+   "seq": 1,
+   "titulo": "Analise de Riscos.pdf",
+   "tipo": "Mapa de Riscos",
+   "arquivo": "01-Mapa-de-Riscos.pdf",
+   "bytes": 1157396,
+   "status": 200
+  },
+  {
+   "seq": 2,
+   "titulo": "Relatorio de Pesquisa de Precos.pdf",
+   "tipo": "Outros Documentos",
+   "arquivo": "02-Outros-Documentos.pdf",
+   "bytes": 4202591,
+   "status": 200
+  },
+  {
+   "seq": 3,
+   "titulo": "ETP.pdf",
+   "tipo": "Estudo Técnico Preliminar",
+   "arquivo": "03-Estudo-Tecnico-Preliminar.pdf",
+   "bytes": 3798631,
+   "status": 200
+  },
+  {
+   "seq": 4,
+   "titulo": "Dfd.pdf",
+   "tipo": "Documento de Formalização da Demanda - DFD",
+   "arquivo": "04-Documento-de-Formalizacao-da-Demanda-DFD.pdf",
+   "bytes": 1916746,
+   "status": 200
+  },
+  {
+   "seq": 5,
+   "titulo": "EDITAL_PREGAO ELETRONICO 58_2026 - WORKSTATION assinado.pdf",
+   "tipo": "Edital",
+   "arquivo": "05-Edital.pdf",
+   "bytes": 1140510,
+   "status": 200
+  }
+ ],
+ "bruto": [
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/04789665000187/compras/2026/71/arquivos/1",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/04789665000187/compras/2026/71/arquivos/1",
+   "tipoDocumentoNome": "Mapa de Riscos",
+   "tipoDocumentoDescricao": "Mapa de Riscos",
+   "statusAtivo": true,
+   "cnpj": "04789665000187",
+   "anoCompra": 2026,
+   "sequencialCompra": 71,
+   "dataPublicacaoPncp": "2026-10-07T13:38:31",
+   "sequencialDocumento": 1,
+   "titulo": "Analise de Riscos.pdf",
+   "tipoDocumentoId": 9
+  },
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/04789665000187/compras/2026/71/arquivos/2",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/04789665000187/compras/2026/71/arquivos/2",
+   "tipoDocumentoNome": "Outros Documentos",
+   "tipoDocumentoDescricao": "Outros Documentos",
+   "statusAtivo": true,
+   "cnpj": "04789665000187",
+   "anoCompra": 2026,
+   "sequencialCompra": 71,
+   "dataPublicacaoPncp": "2026-10-07T13:39:33",
+   "sequencialDocumento": 2,
+   "titulo": "Relatorio de Pesquisa de Precos.pdf",
+   "tipoDocumentoId": 16
+  },
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/04789665000187/compras/2026/71/arquivos/3",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/04789665000187/compras/2026/71/arquivos/3",
+   "tipoDocumentoNome": "Estudo Técnico Preliminar",
+   "tipoDocumentoDescricao": "Estudo Técnico Preliminar",
+   "statusAtivo": true,
+   "cnpj": "04789665000187",
+   "anoCompra": 2026,
+   "sequencialCompra": 71,
+   "dataPublicacaoPncp": "2026-10-07T13:39:34",
+   "sequencialDocumento": 3,
+   "titulo": "ETP.pdf",
+   "tipoDocumentoId": 7
+  },
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/04789665000187/compras/2026/71/arquivos/4",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/04789665000187/compras/2026/71/arquivos/4",
+   "tipoDocumentoNome": "Documento de Formalização da Demanda - DFD",
+   "tipoDocumentoDescricao": "Documento de Formalização da Demanda - DFD",
+   "statusAtivo": true,
+   "cnpj": "04789665000187",
+   "anoCompra": 2026,
+   "sequencialCompra": 71,
+   "dataPublicacaoPncp": "2026-10-07T13:39:43",
+   "sequencialDocumento": 4,
+   "titulo": "Dfd.pdf",
+   "tipoDocumentoId": 10
+  },
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/04789665000187/compras/2026/71/arquivos/5",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/04789665000187/compras/2026/71/arquivos/5",
+   "tipoDocumentoNome": "Edital",
+   "tipoDocumentoDescricao": "Edital",
+   "statusAtivo": true,
+   "cnpj": "04789665000187",
+   "anoCompra": 2026,
+   "sequencialCompra": 71,
+   "dataPublicacaoPncp": "2026-10-07T13:39:50",
+   "sequencialDocumento": 5,
+   "titulo": "EDITAL_PREGAO ELETRONICO 58_2026 - WORKSTATION assinado.pdf",
+   "tipoDocumentoId": 2
+  }
+ ]
+}

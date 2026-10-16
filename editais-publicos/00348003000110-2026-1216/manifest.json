@@ -1,0 +1,74 @@
+{
+ "id": "00348003000110-2026-1216",
+ "baixadoEm": "2026-10-15T21:49:42.313Z",
+ "arquivos": [
+  {
+   "seq": 1,
+   "titulo": "SEI_14234390_Aviso.pdf",
+   "tipo": "Aviso de Contratação Direta",
+   "arquivo": "01-Aviso-de-Contratacao-Direta.pdf",
+   "bytes": 57493,
+   "status": 200
+  },
+  {
+   "seq": 2,
+   "titulo": "SEI_14234336_Ato_de_Autorizacao_da_Dispensa.pdf",
+   "tipo": "Ato que autoriza a Contratação Direta",
+   "arquivo": "02-Ato-que-autoriza-a-Contratacao-Direta.pdf",
+   "bytes": 58557,
+   "status": 200
+  },
+  {
+   "seq": 3,
+   "titulo": "SEI_14226784_Termo_de_Referencia.pdf",
+   "tipo": "Termo de Referência",
+   "arquivo": "03-Termo-de-Referencia.pdf",
+   "bytes": 127859,
+   "status": 200
+  }
+ ],
+ "bruto": [
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/00348003000110/compras/2026/1216/arquivos/1",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/00348003000110/compras/2026/1216/arquivos/1",
+   "statusAtivo": true,
+   "cnpj": "00348003000110",
+   "anoCompra": 2026,
+   "sequencialCompra": 1216,
+   "dataPublicacaoPncp": "2026-10-09T11:57:09",
+   "sequencialDocumento": 1,
+   "titulo": "SEI_14234390_Aviso.pdf",
+   "tipoDocumentoNome": "Aviso de Contratação Direta",
+   "tipoDocumentoDescricao": "Aviso de Contratação Direta",
+   "tipoDocumentoId": 1
+  },
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/00348003000110/compras/2026/1216/arquivos/2",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/00348003000110/compras/2026/1216/arquivos/2",
+   "statusAtivo": true,
+   "cnpj": "00348003000110",
+   "anoCompra": 2026,
+   "sequencialCompra": 1216,
+   "dataPublicacaoPncp": "2026-10-09T11:58:10",
+   "sequencialDocumento": 2,
+   "titulo": "SEI_14234336_Ato_de_Autorizacao_da_Dispensa.pdf",
+   "tipoDocumentoNome": "Ato que autoriza a Contratação Direta",
+   "tipoDocumentoDescricao": "Ato que autoriza a Contratação Direta",
+   "tipoDocumentoId": 20
+  },
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/00348003000110/compras/2026/1216/arquivos/3",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/00348003000110/compras/2026/1216/arquivos/3",
+   "statusAtivo": true,
+   "cnpj": "00348003000110",
+   "anoCompra": 2026,
+   "sequencialCompra": 1216,
+   "dataPublicacaoPncp": "2026-10-09T11:58:10",
+   "sequencialDocumento": 3,
+   "titulo": "SEI_14226784_Termo_de_Referencia.pdf",
+   "tipoDocumentoNome": "Termo de Referência",
+   "tipoDocumentoDescricao": "Termo de Referência",
+   "tipoDocumentoId": 4
+  }
+ ]
+}

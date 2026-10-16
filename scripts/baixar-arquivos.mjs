@@ -6,6 +6,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
+import { naRegiao } from '../src/domain/regiao.js'
 
 const BASE = process.env.PNCP_BASE || 'https://pncp.gov.br/api'
 const PASTA = process.env.EDITAIS_DIR || 'dados-locais/editais'
@@ -117,7 +118,7 @@ function editaisDoApp() {
   try { dados = JSON.parse(fs.readFileSync(ENTRADA, 'utf8')) } catch { return [] }
   const agora = Date.now()
   return (dados.oportunidades ?? [])
-    .filter((o) => ['alta', 'media', 'média'].includes(String(o.relevancia).toLowerCase()) && !(new Date(o.sessionAt).getTime() < agora))
+    .filter((o) => naRegiao(o) && ['alta', 'media', 'média'].includes(String(o.relevancia).toLowerCase()) && !(new Date(o.sessionAt).getTime() < agora))
     .sort((a, b) => new Date(a.sessionAt) - new Date(b.sessionAt))
     .map((o) => parseEditalRef(o.link) ?? parseEditalRef(o.id))
     .filter(Boolean)

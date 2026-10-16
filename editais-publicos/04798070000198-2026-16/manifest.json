@@ -1,0 +1,96 @@
+{
+ "id": "04798070000198-2026-16",
+ "baixadoEm": "2026-10-15T16:16:08.285Z",
+ "arquivos": [
+  {
+   "seq": 1,
+   "titulo": "oficio_d1_d2_merged (1).pdf",
+   "tipo": "Ato que autoriza a Contratação Direta",
+   "arquivo": "01-Ato-que-autoriza-a-Contratacao-Direta.pdf",
+   "bytes": 2180034,
+   "status": 200
+  },
+  {
+   "seq": 2,
+   "titulo": "TERMO DE REFERENCIA.pdf",
+   "tipo": "Termo de Referência",
+   "arquivo": "02-Termo-de-Referencia.pdf",
+   "bytes": 1034597,
+   "status": 200
+  },
+  {
+   "seq": 3,
+   "titulo": "AVISO + TR ASSINADOS.pdf",
+   "tipo": "Aviso de Contratação Direta",
+   "arquivo": "03-Aviso-de-Contratacao-Direta.pdf",
+   "bytes": 6267032,
+   "status": 200
+  },
+  {
+   "seq": 4,
+   "titulo": "1/2026.pdf",
+   "tipo": "Estudo Técnico Preliminar",
+   "arquivo": "04-Estudo-Tecnico-Preliminar.pdf",
+   "bytes": 114418,
+   "status": 200
+  }
+ ],
+ "bruto": [
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/04798070000198/compras/2026/16/arquivos/1",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/04798070000198/compras/2026/16/arquivos/1",
+   "statusAtivo": true,
+   "cnpj": "04798070000198",
+   "anoCompra": 2026,
+   "sequencialCompra": 16,
+   "dataPublicacaoPncp": "2026-10-13T12:07:25",
+   "sequencialDocumento": 1,
+   "titulo": "oficio_d1_d2_merged (1).pdf",
+   "tipoDocumentoNome": "Ato que autoriza a Contratação Direta",
+   "tipoDocumentoDescricao": "Ato que autoriza a Contratação Direta",
+   "tipoDocumentoId": 20
+  },
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/04798070000198/compras/2026/16/arquivos/2",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/04798070000198/compras/2026/16/arquivos/2",
+   "statusAtivo": true,
+   "cnpj": "04798070000198",
+   "anoCompra": 2026,
+   "sequencialCompra": 16,
+   "dataPublicacaoPncp": "2026-10-13T12:08:26",
+   "sequencialDocumento": 2,
+   "titulo": "TERMO DE REFERENCIA.pdf",
+   "tipoDocumentoNome": "Termo de Referência",
+   "tipoDocumentoDescricao": "Termo de Referência",
+   "tipoDocumentoId": 4
+  },
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/04798070000198/compras/2026/16/arquivos/3",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/04798070000198/compras/2026/16/arquivos/3",
+   "statusAtivo": true,
+   "cnpj": "04798070000198",
+   "anoCompra": 2026,
+   "sequencialCompra": 16,
+   "dataPublicacaoPncp": "2026-10-13T12:08:28",
+   "sequencialDocumento": 3,
+   "titulo": "AVISO + TR ASSINADOS.pdf",
+   "tipoDocumentoNome": "Aviso de Contratação Direta",
+   "tipoDocumentoDescricao": "Aviso de Contratação Direta",
+   "tipoDocumentoId": 1
+  },
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/04798070000198/compras/2026/16/arquivos/4",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/04798070000198/compras/2026/16/arquivos/4",
+   "statusAtivo": true,
+   "cnpj": "04798070000198",
+   "anoCompra": 2026,
+   "sequencialCompra": 16,
+   "dataPublicacaoPncp": "2026-10-13T12:08:29",
+   "sequencialDocumento": 4,
+   "titulo": "1/2026.pdf",
+   "tipoDocumentoNome": "Estudo Técnico Preliminar",
+   "tipoDocumentoDescricao": "Estudo Técnico Preliminar",
+   "tipoDocumentoId": 7
+  }
+ ]
+}

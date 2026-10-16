@@ -8,6 +8,7 @@ import { extrairHabilitacao } from '../src/domain/edital/habilitacao.js'
 import { lerManifesto, parseEditalRef, pastaDoEdital } from './baixar-arquivos.mjs'
 import { lerPerfil } from './perfil-habilitacao.mjs'
 import { textosDoEdital } from './texto-pdf.mjs'
+import { naRegiao } from '../src/domain/regiao.js'
 
 const ENTRADA = process.env.OPORTUNIDADES || 'public/dados-locais/oportunidades-reais.json'
 const SAIDA = process.env.HABILITACAO_SAIDA || 'public/dados-locais/habilitacao-avaliada.json'
@@ -19,7 +20,7 @@ async function main() {
   const agora = Date.now()
   const resultado = {}
   for (const o of dados.oportunidades ?? []) {
-    if (new Date(o.sessionAt).getTime() < agora) continue
+    if (new Date(o.sessionAt).getTime() < agora || !naRegiao(o)) continue
     const ref = parseEditalRef(o.link) ?? parseEditalRef(o.id)
     const manifesto = ref && lerManifesto(ref)
     if (!manifesto) continue
