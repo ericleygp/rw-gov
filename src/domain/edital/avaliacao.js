@@ -42,17 +42,19 @@ export function nomesDosItens(itens, max = 3) {
   return nomes.length > max ? `${nomes.slice(0, max).join(', ')} e mais ${nomes.length - max}` : nomes.join(', ')
 }
 
+export const textoGrupos = (grupos) => (grupos?.length ? ` (vale para ${grupos.length > 1 ? 'os Grupos' : 'o Grupo'} ${grupos.join(', ')}; os demais grupos não exigem)` : '')
+
 const SO_VENCEDOR = 'Só é pedido de quem for classificado em 1º lugar: providencie se estiver bem colocado'
 
 function avaliarUma(e, perfil, sessaoEm, itens) {
-  const base = { id: e.id, nivel: e.nivel, rotulo: e.rotulo, trecho: e.trecho, fonte: e.fonte, momento: e.momento ?? 'indefinido', escopo: e.escopo ?? 'empresa' }
+  const base = { id: e.id, nivel: e.nivel, rotulo: e.rotulo, trecho: e.trecho, fonte: e.fonte, momento: e.momento ?? 'indefinido', escopo: e.escopo ?? 'empresa', grupos: e.grupos ?? [] }
   if (e.nivel === 'FORA') {
     const status = FORA[e.id] ?? 'conferir'
     const motivo = status === 'conferir' && base.momento === 'arrematante' ? 'Só é pedida ao 1º colocado: confira prazo e local no edital' : MOTIVO_FORA[status]
     return { ...base, status, motivo }
   }
   const pendente = (motivo) => (base.momento === 'arrematante' ? { ...base, status: 'depois', motivo: `${motivo}. ${SO_VENCEDOR}` } : { ...base, status: 'falta', motivo })
-  const doItem = base.escopo === 'por_item' && itens?.length ? ` (exigido por item: ${nomesDosItens(itens)})` : ''
+  const doItem = (base.escopo === 'por_item' && itens?.length ? ` (exigido por item: ${nomesDosItens(itens)})` : '') + textoGrupos(base.grupos)
   const c = COBERTURA[e.id] ?? { nivel: e.nivel }
   if (!perfil.niveis?.[c.nivel]) return pendente(`${NIVEIS[c.nivel]} ainda não está feito no SICAF`)
   if (c.campo && !perfil[c.campo]) return pendente(`${c.falta}${doItem}`)
@@ -95,7 +97,7 @@ export function resumoParaCopiar(avaliacao, { orgao, sessaoEm } = {}) {
   const linhas = [`Habilitação — ${orgao ?? 'edital'}${sessaoEm ? ` (sessão ${formatarData(String(sessaoEm).slice(0, 10))})` : ''}`, VEREDITO[avaliacao.veredito]]
   for (const [titulo, status] of [['Faltam', ['falta']], ['Só se vencer a disputa', ['depois']], ['Vencem antes da sessão', ['vence']], ['Informar validade', ['sem_data']], ['Conferir no edital', ['conferir']]]) {
     const lista = avaliacao.itens.filter((i) => status.includes(i.status))
-    if (lista.length) linhas.push(`${titulo}: ${lista.map((i) => i.rotulo).join('; ')}`)
+    if (lista.length) linhas.push(`${titulo}: ${lista.map((i) => `${i.rotulo}${i.grupos?.length ? ` (Grupos ${i.grupos.join(', ')})` : ''}`).join('; ')}`)
   }
   return linhas.join('\n')
 }

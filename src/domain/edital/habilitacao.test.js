@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { extrairHabilitacao } from './habilitacao.js'
+import { extrairGrupos, extrairHabilitacao } from './habilitacao.js'
 import { situacaoValidade } from './checklist.js'
 
 const doc = (tipo, texto) => ({ arquivo: `${tipo}.pdf`, tipo, paginas: [{ pagina: 3, texto }] })
@@ -61,4 +61,24 @@ test('validade que vence antes da sessão é sinalizada', () => {
   assert.equal(situacaoValidade('2026-10-22', sessao), 'vence')
   assert.equal(situacaoValidade('2026-10-23', sessao), 'ok')
   assert.equal(situacaoValidade('', sessao), 'sem_data')
+})
+
+
+test('lê a lista de grupos de uma exigência', () => {
+  assert.deepEqual(extrairGrupos('(grupos 01, 02, 03, 04 ou 05).', 0), [1, 2, 3, 4, 5])
+  assert.deepEqual(extrairGrupos('exigido nos grupos 1 a 3 do termo', 0), [1, 2, 3])
+  assert.deepEqual(extrairGrupos('exigido no grupo 6', 0), [6])
+  assert.deepEqual(extrairGrupos('sem nenhuma lista', 0), [])
+})
+
+test('não pega grupos de outra cláusula', () => {
+  const texto = 'certidao negativa de falencia expedida pelo distribuidor da sede do fornecedor; 9.20 qualificacao tecnica (grupos 01, 02 ou 03)'
+  assert.deepEqual(extrairGrupos(texto, 0), [])
+})
+
+test('reconhece atestado de capacidade técnico-operacional com os grupos', () => {
+  const documentos = [{ arquivo: 'edital.pdf', tipo: 'Edital', paginas: [{ pagina: 1, texto: '9.20 Para a comprovação da capacidade técnico-operacional, o licitante deverá apresentar um ou mais atestados que demonstrem experiência anterior (Grupos 01, 02, 03, 04 ou 05). 9.21 Os atestados poderão ser somados.' }] }]
+  const atestado = extrairHabilitacao(documentos).exigencias.find((e) => e.id === 'atestado')
+  assert.ok(atestado)
+  assert.deepEqual(atestado.grupos, [1, 2, 3, 4, 5])
 })
