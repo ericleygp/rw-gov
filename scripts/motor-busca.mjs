@@ -163,6 +163,7 @@ for (const c of abertas) {
     link: `https://pncp.gov.br/app/editais/${c.orgaoEntidade?.cnpj}/${c.anoCompra}/${c.sequencialCompra}`,
     ibge: c.unidadeOrgao?.codigoIbge != null ? String(c.unidadeOrgao.codigoIbge) : null,
     numeroCompra: c.numeroCompra ?? null, processo: c.processo ?? null, publicadoEm: c.dataPublicacaoPncp ?? null,
+    anoCompra: c.anoCompra ?? null, uasg: c.unidadeOrgao?.codigoUnidade != null ? String(c.unidadeOrgao.codigoUnidade) : null, linkSistema: c.linkSistemaOrigem ?? null, propostaAbreEm: c.dataAberturaProposta ?? null,
     relevancia, produtosDistintos: distintos, cobertura: materiais.length ? Math.round((prov.length / materiais.length) * 100) : 0,
     totalItens: itens.length, itensMateriais: materiais.length, todosItens, provaveis: prov.length, possiveis: achados.length - prov.length,
     valorProvavel: prov.reduce((s, a) => s + (Number(a.valorTotal) || 0), 0), itens: achados,
@@ -188,7 +189,7 @@ const oportunidades = com.map((r) => ({
   agency: r.orgao, city: r.municipio, state: UF, modality: r.modalidade, status: 'Aberta', category: 'Não informado',
   estimatedValue: dinheiro(r.valorEstimado), publishedAt: String(r.publicadoEm ?? '').slice(0, 10) || 'não informado', sessionAt: r.encerramento,
   itemCount: r.totalItens, summary: String(r.objeto ?? ''), source: 'PNCP', capturedAt: new Date().toISOString(), dataConfidence: 'Oficial (PNCP)',
-  link: r.link, ibge: r.ibge, relevancia: r.relevancia, produtosDistintos: r.produtosDistintos, itensProvaveis: r.provaveis, cobertura: r.cobertura,
+  link: r.link, ibge: r.ibge, numeroCompra: r.numeroCompra, anoCompra: r.anoCompra, uasg: r.uasg, linkSistema: r.linkSistema, proposalOpensAt: r.propostaAbreEm, relevancia: r.relevancia, produtosDistintos: r.produtosDistintos, itensProvaveis: r.provaveis, cobertura: r.cobertura,
 }))
 const itensApp = com.flatMap((r) => r.itens.map((a) => ({
   id: `pncp-${r.id.replaceAll('/', '-')}-${a.numeroItem}`, opportunityId: `pncp-${r.id.replaceAll('/', '-')}`, itemNumber: a.numeroItem,

@@ -13,7 +13,7 @@ export function listOpportunities() {
   if (!real) return mockOpportunities
   return real.oportunidades.filter(hasValidSession).map((record) => ({
     ...createOpportunity({ ...record, estimatedValue: knownValue(record.estimatedValue) }),
-    link: record.link, ibge: record.ibge ?? null, relevancia: record.relevancia, produtosDistintos: record.produtosDistintos, itensProvaveis: record.itensProvaveis, cobertura: record.cobertura,
+    link: record.link, numeroCompra: record.numeroCompra ?? null, anoCompra: record.anoCompra ?? null, uasg: record.uasg ?? null, linkSistema: record.linkSistema ?? null, proposalOpensAt: record.proposalOpensAt ?? null, ibge: record.ibge ?? null, relevancia: record.relevancia, produtosDistintos: record.produtosDistintos, itensProvaveis: record.itensProvaveis, cobertura: record.cobertura,
     participacao: classificarParticipacao(getHabilitacao(record.id)),
   }))
 }
