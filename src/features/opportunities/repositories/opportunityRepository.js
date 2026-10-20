@@ -2,6 +2,7 @@ import { opportunities as mockOpportunities } from '../../../data/mock/opportuni
 import { createOpportunity } from '../model/opportunity.js'
 import { getHabilitacao, getRealData } from '../../../data/realData.js'
 import { classificarParticipacao } from '../../../domain/edital/participacao.js'
+import { identificarPlataforma } from '../../../domain/edital/plataforma.js'
 
 // Valor ausente, zero ou sigiloso vira NaN: as telas já tratam como "Não informado".
 const knownValue = (value) => (Number.isFinite(value) && value > 0 ? value : NaN)
@@ -14,6 +15,7 @@ export function listOpportunities() {
   return real.oportunidades.filter(hasValidSession).map((record) => ({
     ...createOpportunity({ ...record, estimatedValue: knownValue(record.estimatedValue) }),
     link: record.link, numeroCompra: record.numeroCompra ?? null, anoCompra: record.anoCompra ?? null, uasg: record.uasg ?? null, linkSistema: record.linkSistema ?? null, proposalOpensAt: record.proposalOpensAt ?? null, ibge: record.ibge ?? null, relevancia: record.relevancia, produtosDistintos: record.produtosDistintos, itensProvaveis: record.itensProvaveis, cobertura: record.cobertura,
-    participacao: classificarParticipacao(getHabilitacao(record.id)),
+    plataforma: identificarPlataforma(record),
+    participacao: classificarParticipacao(getHabilitacao(record.id), identificarPlataforma(record)),
   }))
 }

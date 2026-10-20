@@ -6,6 +6,7 @@ import EditalFiles from './EditalFiles.jsx'
 import EditalNotes from './EditalNotes.jsx'
 import HabilitacaoEdital from './HabilitacaoEdital.jsx'
 import { identificacaoNoSistema, nomeArquivoProposta } from '../../domain/edital/compra.js'
+import { identificarPlataforma, avisoCadastro } from '../../domain/edital/plataforma.js'
 import { applyCatalogPrices, applyTargetMargin, initialLines, lineMetrics, normalizeEditalItems, summarize, toCsv, upgradeProposalItems } from '../../domain/proposal/proposal.js'
 import { normalizeText } from '../../utils/normalizeText.js'
 import { getSessionTiming } from '../dashboard/utils/sessionTiming.js'
@@ -175,8 +176,8 @@ function ProposalsPage() {
         {!proposal ? <div className="proposals-empty"><strong>Escolha um edital ao lado para começar.</strong><p>Os itens que combinam com o seu catálogo já vêm marcados.</p></div> : <>
           <section className="proposals-card">
             <div className="proposal-head">
-              <div><h2>{proposal.agency}</h2><p>{proposal.title}</p><small>{proposal.city} · encerra em {dateFormat.format(new Date(proposal.sessionAt))} · {deadline.text}{deadline.short && <em className="chip-short">prazo curto</em>}</small>{noSistema && <small><b>No Compras.gov.br:</b> {noSistema.texto}</small>}</div>
-              <div className="proposal-head-actions">{proposal.link && <a href={proposal.link} target="_blank" rel="noreferrer">Abrir edital no PNCP ↗</a>}{noSistema?.link && <a href={noSistema.link} target="_blank" rel="noreferrer">Acompanhar no Compras.gov.br ↗</a>}<button type="button" onClick={removeProposal}>Excluir proposta</button></div>
+              <div><h2>{proposal.agency}</h2><p>{proposal.title}</p><small>{proposal.city} · encerra em {dateFormat.format(new Date(proposal.sessionAt))} · {deadline.text}{deadline.short && <em className="chip-short">prazo curto</em>}</small>{noSistema && <small><b>Em {identificarPlataforma(currentOpportunity ?? {}).nome}:</b> {noSistema.texto}</small>}{avisoCadastro(identificarPlataforma(currentOpportunity ?? {})) && <small className="chip-short" role="alert"><b>Atenção:</b> {avisoCadastro(identificarPlataforma(currentOpportunity ?? {}))}</small>}</div>
+              <div className="proposal-head-actions">{proposal.link && <a href={proposal.link} target="_blank" rel="noreferrer">Abrir edital no PNCP ↗</a>}{noSistema?.link && <a href={noSistema.link} target="_blank" rel="noreferrer">Acompanhar em {identificarPlataforma(currentOpportunity ?? {}).nome} ↗</a>}<button type="button" onClick={removeProposal}>Excluir proposta</button></div>
             </div>
             {notice && <p className="proposals-notice">{notice}</p>}
             <EditalFiles key={proposal.opportunityId} link={proposal.link} />

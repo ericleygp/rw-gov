@@ -8,6 +8,7 @@ import { normalizeText } from '../../utils/normalizeText.js'
 import { isRealData } from '../../data/realData.js'
 import { GRUPOS } from '../../domain/edital/participacao.js'
 import { identificacaoNoSistema } from '../../domain/edital/compra.js'
+import { identificarPlataforma, avisoCadastro } from '../../domain/edital/plataforma.js'
 import { getSessionTiming } from '../dashboard/utils/sessionTiming.js'
 import './OpportunitiesPage.css'
 
@@ -117,7 +118,7 @@ function OpportunitiesPage({ onNavigate }) {
           <td><div className="radar-title-cell"><span className="radar-row-icon">▤</span><span><strong>{item.title}</strong><small>{item.agency}</small><em>{REAL ? 'Fonte: PNCP' : 'Demonstração — dado simulado'}</em></span></div></td>
           <td><strong className="radar-cell-primary">{item.city}</strong><small className="radar-cell-secondary">{item.state}</small></td>
           <td><span className="category-chip">{item.relevancia ? `${item.relevancia} · ${item.produtosDistintos} produtos` : item.category}</span>{item.participacao && item.participacao.grupo !== 'sem_avaliacao' && <span className={`part-chip part-${item.participacao.grupo}`} title={[...(item.participacao.faltam ?? []), ...(item.participacao.conferir ?? [])].join('; ')}>{item.participacao.rotulo}</span>}{item.participacao?.faltam?.length > 0 && <small className="radar-cell-secondary">Falta: {item.participacao.faltam.slice(0, 2).join('; ')}</small>}</td>
-          <td><span className="radar-cell-primary">{item.modality}</span><small className="radar-cell-secondary">{identificacaoNoSistema(item)?.texto ?? item.processNumber}</small></td>
+          <td><span className="radar-cell-primary">{item.modality}</span><small className="radar-cell-secondary">{identificacaoNoSistema(item)?.texto ?? item.processNumber}</small><small className="radar-cell-secondary" title={avisoCadastro(item.plataforma ?? identificarPlataforma(item)) ?? 'Cadastro em dia'}><b>Disputa em:</b> {(item.plataforma ?? identificarPlataforma(item)).nome}{(item.plataforma ?? identificarPlataforma(item)).status === 'nao' ? ' · SEM CADASTRO' : (item.plataforma ?? identificarPlataforma(item)).status === 'verificar' ? ' · confirmar cadastro' : ''}</small></td>
           <td className="radar-value">{money(item.estimatedValue)}</td>
           <td><strong className="radar-cell-primary">{dateFormat.format(new Date(item.sessionAt))}</strong><small className={`radar-cell-secondary${daysUntil(item.sessionAt) <= 7 && daysUntil(item.sessionAt) >= 0 ? ' deadline-near' : ''}`}>{formatDeadline(item.sessionAt)}</small></td>
           <td><span className={`radar-status status-${statusClass(item.status)}`}><i />{item.status}</span></td>
@@ -149,7 +150,7 @@ function OpportunityDetail({ opportunity, onClose, onStartProposal }) {
       <p className="detail-agency">{opportunity.agency}</p>
       <span className={`radar-status status-${statusClass(opportunity.status)}`}><i />{opportunity.status}</span>
       <p className="detail-summary">{opportunity.summary}</p>
-      {opportunity.link && <p className="detail-summary"><a href={opportunity.link} target="_blank" rel="noreferrer">Abrir edital no PNCP ↗</a>{opportunity.linkSistema && <> · <a href={opportunity.linkSistema} target="_blank" rel="noreferrer">Acompanhar no Compras.gov.br ↗</a></>}</p>}
+      {opportunity.link && <p className="detail-summary"><a href={opportunity.link} target="_blank" rel="noreferrer">Abrir edital no PNCP ↗</a>{opportunity.linkSistema && <> · <a href={opportunity.linkSistema} target="_blank" rel="noreferrer">Acompanhar em {identificarPlataforma(opportunity).nome} ↗</a></>}</p>}
       {REAL && onStartProposal && <p className="detail-summary"><button type="button" className="proposal-start-button" onClick={() => onStartProposal(opportunity.id)}>Montar proposta de preços</button></p>}
       <div className="detail-facts">
         <DetailFact label="Município / UF" value={`${opportunity.city} / ${opportunity.state}`} />
@@ -158,7 +159,9 @@ function OpportunityDetail({ opportunity, onClose, onStartProposal }) {
         <DetailFact label="Itens previstos" value={opportunity.itemCount} />
         {opportunity.relevancia && <DetailFact label="Relevância para o seu catálogo" value={`${opportunity.relevancia} — ${opportunity.produtosDistintos} produtos seus, ${opportunity.itensProvaveis} itens (${opportunity.cobertura}%)`} />}
         <DetailFact label="Publicada em" value={formatPublished(opportunity.publishedAt)} />
-        {identificacaoNoSistema(opportunity) && <DetailFact label="Procure no Compras.gov.br" value={identificacaoNoSistema(opportunity).texto} />}
+        {identificacaoNoSistema(opportunity) && <DetailFact label={`Procure em ${identificarPlataforma(opportunity).nome}`} value={identificacaoNoSistema(opportunity).texto} />}
+        <DetailFact label="Onde disputar" value={identificarPlataforma(opportunity).nome} />
+        <DetailFact label="Cadastro necessário" value={avisoCadastro(identificarPlataforma(opportunity)) ?? identificarPlataforma(opportunity).cadastro} />
         {opportunity.proposalOpensAt && <DetailFact label="Proposta abre em" value={dateTimeFormat.format(new Date(opportunity.proposalOpensAt))} />}
         <DetailFact label="Prazo da proposta (PNCP)" value={`${dateTimeFormat.format(new Date(opportunity.sessionAt))} — confira o horário na tela do sistema`} />
       </div>
