@@ -45,6 +45,13 @@ function OpportunitiesPage({ onNavigate }) {
   const [participation, setParticipation] = usePersistentState('radar.participacao', () => (opportunities.some((item) => item.participacao?.grupo === 'possivel') ? GRUPOS.possivel : TODAS_PARTICIPACOES), (v) => v === TODAS_PARTICIPACOES || Object.values(GRUPOS).includes(v))
   const [selectedId, setSelectedId] = useState(null)
 
+  function startProposal(id) {
+    globalThis.sessionStorage?.setItem('rwgov.proposta.nova', id)
+    onNavigate?.('Propostas de Preços')
+  }
+  // Com dados reais, clicar na linha abre a proposta de preços; o botão › continua abrindo os detalhes.
+  const openRow = (id) => (REAL && onNavigate ? startProposal(id) : setSelectedId(id))
+
   const categories = [...new Set(opportunities.map((item) => item.category))].sort()
   const states = [...new Set(opportunities.map((item) => item.state))].sort()
   const modalities = [...new Set(opportunities.map((item) => item.modality))].sort()
@@ -106,7 +113,7 @@ function OpportunitiesPage({ onNavigate }) {
         <FilterSelect label="Faixa de valor" value={valueBand} onChange={setValueBand} options={VALUE_BANDS} />
       </div>
       <div className="radar-table-wrap"><table className="radar-table"><thead><tr><th>OPORTUNIDADE / ÓRGÃO</th><th>MUNICÍPIO / UF</th><th>{REAL ? 'RELEVÂNCIA' : 'CATEGORIA'}</th><th>MODALIDADE</th><th>VALOR ESTIMADO</th><th>PRAZO DA PROPOSTA</th><th>SITUAÇÃO</th><th><span className="sr-only">Detalhes</span></th></tr></thead><tbody>
-        {filteredOpportunities.map((item) => <tr key={item.id} onClick={() => setSelectedId(item.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') setSelectedId(item.id) }} tabIndex="0" aria-label={`Ver detalhes de ${item.title}`}>
+        {filteredOpportunities.map((item) => <tr key={item.id} onClick={() => openRow(item.id)} onKeyDown={(event) => { if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); openRow(item.id) } }} tabIndex="0" aria-label={REAL ? `Abrir proposta de preços de ${item.title}` : `Ver detalhes de ${item.title}`}>
           <td><div className="radar-title-cell"><span className="radar-row-icon">▤</span><span><strong>{item.title}</strong><small>{item.agency}</small><em>{REAL ? 'Fonte: PNCP' : 'Demonstração — dado simulado'}</em></span></div></td>
           <td><strong className="radar-cell-primary">{item.city}</strong><small className="radar-cell-secondary">{item.state}</small></td>
           <td><span className="category-chip">{item.relevancia ? `${item.relevancia} · ${item.produtosDistintos} produtos` : item.category}</span>{item.participacao && item.participacao.grupo !== 'sem_avaliacao' && <span className={`part-chip part-${item.participacao.grupo}`} title={[...(item.participacao.faltam ?? []), ...(item.participacao.conferir ?? [])].join('; ')}>{item.participacao.rotulo}</span>}{item.participacao?.faltam?.length > 0 && <small className="radar-cell-secondary">Falta: {item.participacao.faltam.slice(0, 2).join('; ')}</small>}</td>
@@ -121,7 +128,7 @@ function OpportunitiesPage({ onNavigate }) {
       <div className="radar-table-footer"><span>Exibindo {filteredOpportunities.length} oportunidade(s)</span><span><i /> {REAL ? 'Valores são estimativas do órgão; prazos conforme o PNCP' : 'Valores e prazos são fictícios'}</span></div>
     </section>
 
-    {selectedOpportunity && <RadarDetailErrorBoundary key={selectedOpportunity.id} onBack={() => setSelectedId(null)}><OpportunityDetail opportunity={selectedOpportunity} onClose={() => setSelectedId(null)} onStartProposal={(id) => { globalThis.sessionStorage?.setItem('rwgov.proposta.nova', id); onNavigate?.('Propostas de Preços') }} /></RadarDetailErrorBoundary>}
+    {selectedOpportunity && <RadarDetailErrorBoundary key={selectedOpportunity.id} onBack={() => setSelectedId(null)}><OpportunityDetail opportunity={selectedOpportunity} onClose={() => setSelectedId(null)} onStartProposal={startProposal} /></RadarDetailErrorBoundary>}
   </div>
 }
 
