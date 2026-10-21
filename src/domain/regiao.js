@@ -7,11 +7,17 @@ export const REGIOES = {
     uf: 'PA',
     municipios: ['Belém', 'Ananindeua', 'Marituba', 'Benevides', 'Santa Bárbara do Pará', 'Santa Izabel do Pará', 'Castanhal', 'Barcarena'],
   },
+  // Região de atuação da R W Comercial: Belém e arredores + Barcarena, Abaetetuba e Moju.
+  local: {
+    nome: 'Belém, Barcarena, Abaetetuba e Moju',
+    uf: 'PA',
+    municipios: ['Belém', 'Ananindeua', 'Marituba', 'Benevides', 'Santa Bárbara do Pará', 'Santa Izabel do Pará', 'Castanhal', 'Barcarena', 'Abaetetuba', 'Moju'],
+  },
   pa: { nome: 'Pará', uf: 'PA', municipios: null },
   todas: { nome: 'Todo o Brasil', uf: null, municipios: null },
 }
 
-export const REGIAO_PADRAO = 'rmb'
+export const REGIAO_PADRAO = 'local'
 
 const semAcento = (texto) => String(texto ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim()
 // "Santa Izabel" e "Santa Isabel" aparecem nas duas grafias.

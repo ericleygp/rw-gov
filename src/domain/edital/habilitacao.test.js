@@ -82,3 +82,8 @@ test('reconhece atestado de capacidade técnico-operacional com os grupos', () =
   assert.ok(atestado)
   assert.deepEqual(atestado.grupos, [1, 2, 3, 4, 5])
 })
+
+test('reconhece "Atestado (s) de capacidade técnica" com (s) e quebra de linha (edital FADESP)', () => {
+  const r = extrairHabilitacao([doc('Edital', '11.1.3. Qualificação Técnica\na) Atestado (s) de capacidade técnica, fornecido (s) por pessoa (s)\njurídica (s) de direito público ou privado, comprovando que a empresa\nforneceu MATERIAIS em quantidades e características com o objeto desta seleção;')])
+  assert.ok(achou(r, 'atestado'))
+})

@@ -33,7 +33,11 @@ test('filtrarPorRegiao mantém só os itens das oportunidades da região', () =>
   assert.equal(r.regiao, 'rmb')
 })
 
-test('região padrão é a metropolitana de Belém', () => {
-  assert.equal(regiaoAtiva(), 'rmb')
+test('região padrão inclui Abaetetuba, Moju e Barcarena, e continua sem outras cidades', () => {
+  assert.equal(regiaoAtiva(), 'local')
+  for (const cidade of ['Abaetetuba', 'ABAETETUBA', 'Moju', 'Barcarena', 'Belém']) assert.equal(naRegiao(op(cidade)), true, cidade)
+  for (const cidade of ['Marabá', 'Igarapé-Miri', 'Tailândia']) assert.equal(naRegiao(op(cidade)), false, cidade)
+  assert.equal(naRegiao(op('Abaetetuba', 'MA')), false)
+  assert.equal(naRegiao(op('Abaetetuba'), 'rmb'), false)
   assert.ok(REGIOES.rmb.municipios.includes('Barcarena'))
 })

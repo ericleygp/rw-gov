@@ -1,6 +1,7 @@
-// Motor de busca: coleta compras abertas (PNCP), lê os ITENS de cada uma e compara com o seu catálogo.
-// Entrada: dados-locais/catalogo-real-confiavel.csv  ·  Saída: dados-locais/resultado-busca.json
+// Motor de busca: coleta compras abertas (PNCP), lê os ITENS de cada uma e separa os de papelaria, informática e armarinho.
+// Não usa catálogo nem estoque (ver scripts/categorias.mjs)  ·  Saída: dados-locais/resultado-busca.json
 import fs from 'node:fs'
+import { classificarItem } from './categorias.mjs'
 
 const BASE = process.env.PNCP_BASE || 'https://pncp.gov.br/api'
 const PAUSA_MS = Number(process.env.PNCP_PAUSA_MS ?? 1000)
@@ -8,61 +9,11 @@ const UF = process.env.PNCP_UF || 'PA'
 const DIAS = Number(process.env.PNCP_DIAS ?? 60)
 const MODALIDADES = (process.env.PNCP_MODALIDADES || '6,8').split(',')
 const PASTA = 'dados-locais'
-const CSV = process.env.CATALOGO || `${PASTA}/catalogo-real-confiavel.csv`
 const CACHE = `${PASTA}/cache-itens`
 fs.mkdirSync(CACHE, { recursive: true })
 
 const dormir = (ms) => new Promise((r) => setTimeout(r, ms))
-const sem = (t) => String(t ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
 const ymd = (d) => d.toISOString().slice(0, 10).replaceAll('-', '')
-const PARADAS = new Set(['de', 'da', 'do', 'das', 'dos', 'para', 'com', 'sem', 'e', 'em', 'a', 'o', 'as', 'os', 'tipo', 'cor', 'modelo', 'marca', 'similar', 'ou', 'um', 'uma', 'no', 'na', 'ate', 'por', 'item', 'cx', 'un', 'unid', 'unidade', 'c', 'p'])
-function tokens(t) {
-  return [...new Set((sem(t).match(/[a-z0-9]+/g) || []).filter((x) => x.length > 1 && !PARADAS.has(x)).map((x) => (x.length > 3 && x.endsWith('s') && !x.endsWith('ss') ? x.slice(0, -1) : x)))]
-}
-
-const soLetras = (arr) => arr.filter((x) => /^[a-z]+$/.test(x))
-// Em itens de "LOTE ... - Produto", o produto é o último trecho depois do hífen.
-const nucleo = (d) => { const s = String(d ?? ''); const partes = s.split(/\s-\s/); return /^\s*lote\b/i.test(s) && partes.length > 1 ? partes[partes.length - 1] : s }
-
-// ---------- catálogo ----------
-function lerCsv(texto) {
-  const linhas = []; let cel = ''; let lin = []; let aspas = false
-  for (let i = 0; i < texto.length; i += 1) {
-    const c = texto[i]
-    if (c === '"' && aspas && texto[i + 1] === '"') { cel += '"'; i += 1 } else if (c === '"') aspas = !aspas
-    else if (!aspas && c === ';') { lin.push(cel); cel = '' } else if (!aspas && (c === '\n' || c === '\r')) {
-      if (c === '\r' && texto[i + 1] === '\n') i += 1
-      lin.push(cel); linhas.push(lin); lin = []; cel = ''
-    } else cel += c
-  }
-  if (cel || lin.length) { lin.push(cel); linhas.push(lin) }
-  return linhas.filter((l) => l.some(Boolean))
-}
-if (!fs.existsSync(CSV)) { console.error(`Catálogo não encontrado em ${CSV}. Coloque o CSV na pasta ${PASTA}.`); process.exit(1) }
-const [cab, ...dados] = lerCsv(fs.readFileSync(CSV, 'utf8').replace(/^\uFEFF/, ''))
-const col = (n) => cab.indexOf(n)
-const produtos = dados.map((l) => {
-  const t = soLetras(tokens(l[col('nome')]))
-  return { nome: l[col('nome')], tokens: t, head: t[0], estoque: l[col('estoque')] || '', preco: l[col('preco_venda')] || '', codigo: l[col('codigo_interno')] }
-}).filter((p) => p.head)
-const porHead = new Map()
-for (const p of produtos) porHead.set(p.head, [...(porHead.get(p.head) || []), p])
-console.log(`Catálogo: ${produtos.length} produtos`)
-
-function melhorProduto(descricao) {
-  const tk = soLetras(tokens(nucleo(descricao)))
-  const conjunto = new Set(tk)
-  let melhor = null
-  // O produto do catálogo precisa ser o início da descrição (1º ou 2º termo).
-  for (const t of tk.slice(0, 2)) for (const p of porHead.get(t) || []) {
-    const comuns = p.tokens.filter((x) => conjunto.has(x)).length
-    const cobertura = comuns / p.tokens.length
-    if (!melhor || cobertura > melhor.cobertura || (cobertura === melhor.cobertura && comuns > melhor.comuns)) melhor = { p, comuns, cobertura }
-  }
-  if (!melhor) return null
-  const nivel = melhor.comuns >= 2 && melhor.cobertura >= 0.6 ? 'provavel' : 'possivel'
-  return { ...melhor, nivel }
-}
 
 // ---------- PNCP ----------
 async function get(url, tentativas = 4) {
@@ -140,11 +91,11 @@ for (const c of abertas) {
   const materiais = itens.filter((it) => it.materialOuServico !== 'S')
   const achados = []
   for (const it of materiais) {
-    const m = melhorProduto(it.descricao)
-    if (m) achados.push({ numeroItem: it.numeroItem, descricao: String(it.descricao).slice(0, 140), descricaoCompleta: String(it.descricao ?? ''), unidade: it.unidadeMedida ?? null, valorUnitario: it.valorUnitarioEstimado ?? null, quantidade: it.quantidade, valorTotal: it.valorTotal ?? null, nivel: m.nivel, produto: m.p.nome, estoque: m.p.estoque, precoVenda: m.p.preco, codigo: m.p.codigo })
+    const m = classificarItem(it.descricao)
+    if (m) achados.push({ numeroItem: it.numeroItem, descricao: String(it.descricao).slice(0, 140), descricaoCompleta: String(it.descricao ?? ''), unidade: it.unidadeMedida ?? null, valorUnitario: it.valorUnitarioEstimado ?? null, quantidade: it.quantidade, valorTotal: it.valorTotal ?? null, nivel: m.nivel, categoria: m.categoria, produto: `${m.rotulo}: ${m.termo}`, estoque: '', precoVenda: '', codigo: `${m.categoria}:${m.termo}` })
   }
   const prov = achados.filter((a) => a.nivel === 'provavel')
-  // Relevância = quantos produtos DIFERENTES do catálogo aparecem como provável (derruba coincidências de 1 produto só).
+  // Relevância = quantos tipos de produto DIFERENTES (papelaria, informática, armarinho) aparecem como provável (derruba coincidências de 1 produto só).
   const distintos = new Set(prov.map((a) => a.codigo)).size
   // Lista completa do edital (para montar proposta): só das compras com algum item provável, para o arquivo não crescer à toa.
   const porNumero = new Map(achados.map((a) => [a.numeroItem, a]))
@@ -153,7 +104,7 @@ for (const c of abertas) {
     return {
       numeroItem: it.numeroItem, descricao: String(it.descricao ?? ''), unidade: it.unidadeMedida ?? null, quantidade: it.quantidade ?? null,
       valorUnitario: it.orcamentoSigiloso ? null : (it.valorUnitarioEstimado ?? null), sigiloso: Boolean(it.orcamentoSigiloso), tipo: it.materialOuServico ?? null,
-      match: a ? { nivel: a.nivel, produto: a.produto, estoque: a.estoque || 'não informado', precoVenda: a.precoVenda || 'não informado', codigo: a.codigo } : null,
+      match: a ? { nivel: a.nivel, categoria: a.categoria, produto: a.produto, estoque: a.estoque || 'não informado', precoVenda: a.precoVenda || 'não informado', codigo: a.codigo } : null,
     }
   }) : undefined
   const relevancia = distintos >= 8 ? 'alta' : distintos >= 3 ? 'media' : distintos >= 1 ? 'baixa' : 'nenhuma'
@@ -164,7 +115,7 @@ for (const c of abertas) {
     ibge: c.unidadeOrgao?.codigoIbge != null ? String(c.unidadeOrgao.codigoIbge) : null,
     numeroCompra: c.numeroCompra ?? null, processo: c.processo ?? null, publicadoEm: c.dataPublicacaoPncp ?? null,
     anoCompra: c.anoCompra ?? null, uasg: c.unidadeOrgao?.codigoUnidade != null ? String(c.unidadeOrgao.codigoUnidade) : null, linkSistema: c.linkSistemaOrigem ?? null, propostaAbreEm: c.dataAberturaProposta ?? null,
-    relevancia, produtosDistintos: distintos, cobertura: materiais.length ? Math.round((prov.length / materiais.length) * 100) : 0,
+    categorias: [...new Set(prov.map((a) => a.categoria))], relevancia, produtosDistintos: distintos, cobertura: materiais.length ? Math.round((prov.length / materiais.length) * 100) : 0,
     totalItens: itens.length, itensMateriais: materiais.length, todosItens, provaveis: prov.length, possiveis: achados.length - prov.length,
     valorProvavel: prov.reduce((s, a) => s + (Number(a.valorTotal) || 0), 0), itens: achados,
   })
@@ -178,7 +129,7 @@ const com = resultado.filter((r) => r.provaveis > 0)
 const cont = (n) => resultado.filter((r) => r.relevancia === n).length
 console.log(`\n\nCompras abertas lidas: ${abertas.length} · relevância ALTA: ${cont('alta')} · MÉDIA: ${cont('media')} · baixa: ${cont('baixa')}`)
 for (const r of com.filter((x) => x.relevancia !== 'baixa').slice(0, 12)) {
-  console.log(`\n- [${r.relevancia.toUpperCase()}] ${String(r.encerramento).slice(0, 10)} · ${r.municipio} · ${r.modalidade} · ${r.produtosDistintos} produtos seus · ${r.provaveis} itens de ${r.itensMateriais} (${r.cobertura}%)`)
+  console.log(`\n- [${r.relevancia.toUpperCase()}] ${String(r.encerramento).slice(0, 10)} · ${r.municipio} · ${r.modalidade} · ${r.produtosDistintos} tipos de produto · ${r.provaveis} itens de ${r.itensMateriais} (${r.cobertura}%)`)
   console.log(`  ${String(r.objeto).slice(0, 100)}`)
 }
 
@@ -186,7 +137,7 @@ for (const r of com.filter((x) => x.relevancia !== 'baixa').slice(0, 12)) {
 const dinheiro = (v) => (v == null || Number.isNaN(Number(v)) ? 'não informado' : Number(v))
 const oportunidades = com.map((r) => ({
   id: `pncp-${r.id.replaceAll('/', '-')}`, processNumber: r.processo || r.numeroCompra || r.id, title: String(r.objeto ?? '').replace(/^\[[^\]]+\]\s*-\s*/, '').slice(0, 160),
-  agency: r.orgao, city: r.municipio, state: UF, modality: r.modalidade, status: 'Aberta', category: 'Não informado',
+  agency: r.orgao, city: r.municipio, state: UF, modality: r.modalidade, status: 'Aberta', category: r.categorias.length ? r.categorias.map((c) => ({ papelaria: 'Papelaria', informatica: 'Informática', armarinho: 'Armarinho' })[c]).join(' + ') : 'Não informado',
   estimatedValue: dinheiro(r.valorEstimado), publishedAt: String(r.publicadoEm ?? '').slice(0, 10) || 'não informado', sessionAt: r.encerramento,
   itemCount: r.totalItens, summary: String(r.objeto ?? ''), source: 'PNCP', capturedAt: new Date().toISOString(), dataConfidence: 'Oficial (PNCP)',
   link: r.link, ibge: r.ibge, numeroCompra: r.numeroCompra, anoCompra: r.anoCompra, uasg: r.uasg, linkSistema: r.linkSistema, proposalOpensAt: r.propostaAbreEm, relevancia: r.relevancia, produtosDistintos: r.produtosDistintos, itensProvaveis: r.provaveis, cobertura: r.cobertura,
@@ -194,7 +145,7 @@ const oportunidades = com.map((r) => ({
 const itensApp = com.flatMap((r) => r.itens.map((a) => ({
   id: `pncp-${r.id.replaceAll('/', '-')}-${a.numeroItem}`, opportunityId: `pncp-${r.id.replaceAll('/', '-')}`, itemNumber: a.numeroItem,
   originalDescription: a.descricaoCompleta, quantity: dinheiro(a.quantidade), supplyUnit: a.unidade || 'não informado', estimatedUnitValue: dinheiro(a.valorUnitario),
-  match: { nivel: a.nivel, produto: a.produto, estoque: a.estoque || 'não informado', precoVenda: a.precoVenda || 'não informado', codigo: a.codigo },
+  match: { nivel: a.nivel, categoria: a.categoria, produto: a.produto, estoque: a.estoque || 'não informado', precoVenda: a.precoVenda || 'não informado', codigo: a.codigo },
 })))
 fs.mkdirSync('public/dados-locais', { recursive: true })
 const editais = Object.fromEntries(com.filter((r) => r.todosItens).map((r) => [`pncp-${r.id.replaceAll('/', '-')}`, r.todosItens]))
