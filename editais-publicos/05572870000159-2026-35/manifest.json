@@ -1,0 +1,30 @@
+{
+ "id": "05572870000159-2026-35",
+ "baixadoEm": "2026-10-21T18:39:43.069Z",
+ "arquivos": [
+  {
+   "seq": 1,
+   "titulo": "Edital de Selecao Publica NLLI 17_2026_ Aquisicao de Material de Informatica.pdf",
+   "tipo": "Edital",
+   "arquivo": "01-Edital.pdf",
+   "bytes": 995024,
+   "status": 200
+  }
+ ],
+ "bruto": [
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/05572870000159/compras/2026/35/arquivos/1",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/05572870000159/compras/2026/35/arquivos/1",
+   "tipoDocumentoId": 2,
+   "statusAtivo": true,
+   "cnpj": "05572870000159",
+   "anoCompra": 2026,
+   "sequencialCompra": 35,
+   "dataPublicacaoPncp": "2026-10-16T15:10:16",
+   "sequencialDocumento": 1,
+   "titulo": "Edital de Selecao Publica NLLI 17_2026_ Aquisicao de Material de Informatica.pdf",
+   "tipoDocumentoNome": "Edital",
+   "tipoDocumentoDescricao": "Edital"
+  }
+ ]
+}
