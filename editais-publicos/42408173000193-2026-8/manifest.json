@@ -1,0 +1,30 @@
+{
+ "id": "42408173000193-2026-8",
+ "baixadoEm": "2026-10-23T14:14:20.634Z",
+ "arquivos": [
+  {
+   "seq": 1,
+   "titulo": "Edital_PE__0432026_Aquisicao_Aparelhamento_Tecnico_SEMEIA",
+   "tipo": "Edital",
+   "arquivo": "01-Edital.pdf",
+   "bytes": 5714933,
+   "status": 200
+  }
+ ],
+ "bruto": [
+  {
+   "uri": "https://pncp.gov.br/pncp-api/v1/orgaos/42408173000193/compras/2026/8/arquivos/1",
+   "url": "https://pncp.gov.br/pncp-api/v1/orgaos/42408173000193/compras/2026/8/arquivos/1",
+   "statusAtivo": true,
+   "cnpj": "42408173000193",
+   "anoCompra": 2026,
+   "sequencialCompra": 8,
+   "dataPublicacaoPncp": "2026-10-14T21:49:46",
+   "sequencialDocumento": 1,
+   "titulo": "Edital_PE__0432026_Aquisicao_Aparelhamento_Tecnico_SEMEIA",
+   "tipoDocumentoNome": "Edital",
+   "tipoDocumentoDescricao": "Edital",
+   "tipoDocumentoId": 2
+  }
+ ]
+}
