@@ -240,6 +240,7 @@ function montarAlertas(campos, semTexto, docs) {
   const alertas = []
   if (docs.length === 0) alertas.push({ nivel: 'info', texto: 'Ainda não há arquivos do edital baixados.' })
   for (const d of semTexto) alertas.push({ nivel: 'atencao', texto: `"${d.tipo || d.arquivo}" é um PDF escaneado (só imagem): o app não consegue ler. Abra o arquivo e confira entrega, prazos e multas.` })
+  for (const d of docs.filter((x) => x.paginas?.some((p) => p.ocr && (p.texto ?? '').trim().length > 40))) alertas.push({ nivel: 'info', texto: `"${d.tipo || d.arquivo}" era escaneado e foi lido por OCR (reconhecimento de imagem): confira números, datas e valores no documento original.` })
   const frete = tem('frete'); if (frete) alertas.push({ nivel: 'atencao', texto: 'Frete e descarregamento por sua conta: coloque no preço de cada item.' })
   const multa = tem('multa'); if (multa) alertas.push({ nivel: 'atencao', texto: `Multas no edital: ${multa.valor}. Atraso na entrega custa caro, então só prometa o prazo que você cumpre.` })
   const prazo = tem('prazo_entrega')

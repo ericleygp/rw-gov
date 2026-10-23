@@ -70,3 +70,9 @@ test('vigência não confunde o limite de prorrogação com o prazo do contrato'
   const ok = extrairObservacoes([doc('Termo de Referência', 'O contrato terá prazo de vigência de 12 (doze) meses, contados da assinatura.')])
   assert.equal(campo(ok, 'vigencia').valor, '12 meses')
 })
+
+test('documento lido por OCR gera aviso para conferir números no original', () => {
+  const r = extrairObservacoes([{ arquivo: 'tr.pdf', tipo: 'Termo de Referência', paginas: [{ pagina: 1, ocr: true, texto: 'A entrega deverá ocorrer em 15 (quinze) dias corridos, contados do recebimento da nota de empenho.' }] }])
+  assert.ok(r.alertas.some((a) => a.nivel === 'info' && /OCR/.test(a.texto)))
+  assert.equal(r.semTexto.length, 0)
+})
